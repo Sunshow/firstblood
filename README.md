@@ -10,3 +10,6 @@ MySQL安装，并创建一个数据库，并将bjgl.properties中的对应配置
 
 ###初始化表结构
 执行sql/tables.sql
+
+###初始化数据
+执行sql/init.sql

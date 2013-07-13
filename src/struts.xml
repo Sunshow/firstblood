@@ -29,7 +29,6 @@
             <result name="unauthorized">/WEB-INF/jsp/unauthorized.jsp</result>
             <result name="index">/parentDirect.jsp</result>
             <result name="input">/WEB-INF/jsp/paramsError.jsp</result>
-            <result name="multiconfirm">/WEB-INF/jsp/multiconfirmInfo.jsp</result>
         </global-results>
     </package>
 
