@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.message">
+	<class name="Message" table="admin_message">
+        <id name="messageID" column="message_id">
+            <generator class="native"></generator>
+        </id>
+        <property name="messageSender" column="message_sender"/>
+        <property name="messageTitle" column="message_title"/>
+        <property name="messageContent" column="message_content"/>
+        <property name="messageFlag" column="message_flag"/>
+        <property name="messageTime" column="message_time" not-null="true" update="false"/>
+        <property name="messageType" column="message_type"/>
+    </class>
+	<class name="MessageReceiver" table="admin_message_receiver">
+        <id name="messageReceiverID" column="message_receiver_id">
+            <generator class="native"></generator>
+        </id>
+        <property name="messageID" column="message_id"/>
+        <property name="userID" column="user_id"/>
+        <property name="flag"/>
+        <property name="readTime" column="read_time"/>
+    </class>
+</hibernate-mapping>

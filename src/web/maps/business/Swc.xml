@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.business">
+	<class name="Swc" table="admin_business_swc">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name" column="name" length="255" not-null="true"/>
+        <property name="createTime" column="create_time" not-null="true"/>
+        <property name="updateTime" column="update_time"/>
+        <property name="status">
+        	<column name="status" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.EnabledStatus
+				</param>
+			</type>
+        </property>
+    </class>
+</hibernate-mapping>

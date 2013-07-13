@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.business">
+	<class name="SmsMailMember" table="admin_business_sms_mail_member">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="uid" column="uid" not-null="true"/>
+        <property name="userName" column="user_name" length="20" not-null="true"/>
+        <property name="groupId" column="group_id" not-null="true"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.cms">
+	<class name="Vote" table="admin_cms_vote">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="title" not-null="true"/>
+        <property name="voteType" not-null="true">
+        	<column name="vote_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.VoteType
+				</param>
+			</type>
+        </property>
+        <property name="voteLimitAmount" column="vote_limit_amount"/>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="beginTime" column="begin_time" not-null="true"/>
+        <property name="endTime" column="end_time" not-null="true"/>
+        <property name="valid" not-null="true"/>
+        <property name="memo"/>
+    </class>
+</hibernate-mapping>

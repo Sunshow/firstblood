@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.cms">
+	<class name="News" table="admin_cms_news" dynamic-insert="true" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="cateID" column="cate_id" not-null="true"/>
+        <property name="name"/>
+        <property name="title" not-null="true"/>
+        <property name="shortContent" column="short_content"/>
+        <property name="content" type="org.hibernate.type.StringClobType"/>
+        <property name="keyword"/>
+        <property name="author"/>
+        <property name="imageUrl" column="image_url"/>
+        <property name="editor"/>
+        <property name="fromPlace" column="from_place"/>
+        <property name="headNews" column="head_news" not-null="true"/>
+        <property name="currentNew" column="current_new" not-null="true"/>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="updateTime" column="update_time" not-null="true"/>
+        <property name="contentType" not-null="true">
+        	<column name="content_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.ContentType
+				</param>
+			</type>
+        </property>
+        <property name="link"/>
+        <property name="orderView" column="order_view"/>
+        <property name="valid" not-null="true"/>
+        <property name="url"/>
+        <property name="click"/>
+        <property name="disableEditor">
+			<column name="disable_editor" precision="11" scale="0" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.YesNoStatus
+				</param>
+			</type>
+		</property>
+		<property name="userId" column="user_id" update="false"/>
+		<property name="lastUpdateUserId" column="last_update_user_id"/>
+		<property name="uvData" column="uv_data"/>
+		<property name="clickFlag" column="click_flag"/>
+    </class>
+</hibernate-mapping>

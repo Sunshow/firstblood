@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.user">
+	<class name="Menu" table="admin_menu" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name" length="16" not-null="true"/>
+        <property name="url" length="512"/>
+        <property name="orderView" column="order_view"/>
+        <property name="valid" not-null="true"/>
+        <property name="memo"/>
+    </class>
+</hibernate-mapping>

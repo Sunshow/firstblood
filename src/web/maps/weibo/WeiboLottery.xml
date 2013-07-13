@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.weibo">
+	<class name="WeiboLottery" table="admin_weibo_lottery">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="uid" />
+        <property name="weiboType" not-null="true">
+        	<column name="weibo_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.lottery.WeiboType
+				</param>
+			</type>
+        </property>
+        <property name="lotteryType" not-null="true">
+        	<column name="lottery_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.lottery.LotteryType
+				</param>
+			</type>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.customconfig">
+	<class name="CustomFunctionConfig" table="admin_custom_function_config">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="functionType">
+        	<column name="function_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.domain.customconfig.FunctionType
+				</param>
+			</type>
+        </property>
+        <property name="roles">
+        	<column name="roles"/>
+        </property>
+        <property name="users">
+        	<column name="users"/>
+        </property>
+    </class>
+</hibernate-mapping>

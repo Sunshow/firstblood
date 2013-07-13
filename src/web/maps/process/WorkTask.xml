@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.process">
+	<class name="WorkTask" table="admin_business_work_task">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="processId" column="process_id"/>
+        <property name="taskId" column="task_id"/>
+        <property name="taskName" column="task_name"/>
+        <property name="taskType">
+        	<column name="task_type"/>
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.TaskType
+				</param>
+			</type>
+        </property>
+    </class>
+</hibernate-mapping>

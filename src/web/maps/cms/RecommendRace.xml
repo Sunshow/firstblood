@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.cms">
+	<class name="RecommendRace" table="recommend_race">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="cooperatorId">
+        	<column name="cooperator_id" not-null="true" />
+        </property>
+        <property name="lotteryType">
+        	<column name="lottery_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.lottery.LotteryType
+				</param>
+			</type>
+        </property>
+        <property name="phase">
+        	<column name="phase" not-null="true"/>
+        </property>
+        <property name="dcId">
+        	<column name="dc_id"/>
+        </property>
+        <property name="matchNum">
+        	<column name="match_num" not-null="true" />
+        </property>
+        <property name="homeTeam">
+        	<column name="home_team" not-null="true" />
+        </property>
+        <property name="awayTeam">
+        	<column name="away_team" not-null="true" />
+        </property>
+        <property name="matchName">
+        	<column name="match_name" not-null="true" />
+        </property>
+        <property name="recommendDate">
+        	<column name="recommend_date" not-null="true" />
+        </property>
+        <property name="updateDate">
+        	<column name="update_date"/>
+        </property>
+        <property name="recommendValue">
+        	<column name="recommend_value"/>
+        </property>
+    </class>
+</hibernate-mapping>

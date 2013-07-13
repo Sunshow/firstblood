@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions id="definitions" 
+  xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:activiti="http://activiti.org/bpmn"
+  targetNamespace="http://activiti.org/bpmn20">
+  
+  <process id="addedRewardsProcess" name="补充派奖操作流程">
+  	 <startEvent id="theStart" />
+     <sequenceFlow id="flow1" sourceRef="theStart" targetRef="createAddedRewardsTask" />
+    
+     <serviceTask id="createAddedRewardsTask" name="创建补充派奖工单" 
+       activiti:delegateExpression="${createAddedRewardsTaskDelegate}" />    
+     <sequenceFlow id="flow2" sourceRef="createAddedRewardsTask" targetRef="drawTask" />
+     
+     <userTask id="drawTask" name="开奖">
+     </userTask>
+     <sequenceFlow id="flow3" sourceRef="drawTask" targetRef="notifyCustomerServiceSupervisor" />
+     
+     <!-- <userTask id="comfirmAmountAndMemo" name="写入金额及备注">
+     </userTask>
+     <sequenceFlow id="flow4" sourceRef="comfirmAmountAndMemo" targetRef="notifyCustomerServiceSupervisor" /> -->
+     
+     <serviceTask id="notifyCustomerServiceSupervisor" name="通知客服主管" 
+       activiti:delegateExpression="${notifyCustomerServiceSupervisorDelegate}" />    
+     <sequenceFlow id="flow5" sourceRef="notifyCustomerServiceSupervisor" targetRef="auditAddedRewardsTask" />
+     
+     <userTask id="auditAddedRewardsTask" name="客服主管认领并审核补充派奖工单">
+     	<documentation>
+     		客服主管认领并审核补充派奖工单
+     	</documentation>
+    	<extensionElements>
+		    <activiti:taskListener delegateExpression="${processTaskListener}" event="create"/>
+		</extensionElements>
+     </userTask>
+     <sequenceFlow id="flow6" sourceRef="auditAddedRewardsTask" targetRef="auditAddedRewardsGw" />
+     
+     <!-- <userTask id="auditAddedRewardsTask" name="审核补充派奖工单">
+     	<documentation>
+     		客服主管审核补充派奖工单
+     	</documentation>
+     </userTask>
+     <sequenceFlow id="flow7" sourceRef="auditAddedRewardsTask" targetRef="auditAddedRewardsGw" /> -->
+     
+      <!-- start 审核判断 -->
+     <exclusiveGateway id="auditAddedRewardsGw" name="客服主管审核判断" /> 
+     <sequenceFlow id="flow8" sourceRef="auditAddedRewardsGw" targetRef="theEnd">
+	     <documentation>
+	     	客服主管审核未通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!agree}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="flow9" sourceRef="auditAddedRewardsGw" targetRef="notifyFinancialUser">
+     	 <documentation>
+	     	客服主管审核通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${agree}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 审核判断 -->
+     
+     <serviceTask id="notifyFinancialUser" name="通知财务人员" 
+       activiti:delegateExpression="${notifyFinancialUserAddedRewardsDelegate}" />    
+     <sequenceFlow id="flow10" sourceRef="notifyFinancialUser" targetRef="payAddedRewardsTask" />
+     
+     <userTask id="payAddedRewardsTask" name="财务人员认领补充派奖工单">
+     	<documentation>
+     		财务人员领取(claim)补充派奖工单
+     	</documentation>
+    	<extensionElements>
+		    <activiti:taskListener delegateExpression="${processTaskListener}" event="create"/>
+		</extensionElements>
+     </userTask>
+     <sequenceFlow id="flow11" sourceRef="payAddedRewardsTask" targetRef="financialUserAmountGw" />
+     
+     <!-- start 额度判断 -->
+     <exclusiveGateway id="financialUserAmountGw" name="操作人员额度判断" /> 
+     <sequenceFlow id="flow12" sourceRef="financialUserAmountGw" targetRef="returnAddedRewardsTask">
+	     <documentation>
+	     	额度不足，退回已领取补充派奖任务
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!enough}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="flow13" sourceRef="financialUserAmountGw" targetRef="approveAddedRewardsTask">
+     	 <documentation>
+	     	额度充足，继续执行
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${enough}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 额度判断 -->
+     
+     <!-- start 额度不足情况 -->
+     <userTask id="returnAddedRewardsTask" name="退回已领取补充派奖任务"></userTask>
+     <sequenceFlow id="flow14" sourceRef="returnAddedRewardsTask" targetRef="notifyHigherFinancialUser" />
+     
+     <serviceTask id="notifyHigherFinancialUser" name="通知上级财务人员" 
+       activiti:delegateExpression="${notifyHigherFinancialUserAddedRewardsDelegate}" />    
+     <sequenceFlow id="flow15" sourceRef="notifyHigherFinancialUser" targetRef="payAddedRewardsTask" />
+     <!-- end 额度不足情况 -->
+     
+     <!-- start 额度充足情况 -->
+     <userTask id="approveAddedRewardsTask" name="批准补充派奖任务"></userTask>
+     <sequenceFlow id="flow19" sourceRef="approveAddedRewardsTask" targetRef="approveAddedRewardsTaskGw" />
+     <exclusiveGateway id="approveAddedRewardsTaskGw" name="批准补充派奖判断" /> 
+     <sequenceFlow id="flow17" sourceRef="approveAddedRewardsTaskGw" targetRef="theEnd">
+	     <documentation>
+	     	批准补充派奖未通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!agree}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="flow18" sourceRef="approveAddedRewardsTaskGw" targetRef="executeAddedRewardsTask">
+     	 <documentation>
+	     	批准补充派奖通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${agree}</conditionExpression>
+     </sequenceFlow>
+     <serviceTask id="executeAddedRewardsTask" name="批准补充派奖" 
+     	activiti:delegateExpression="${approveAddedRewardsTaskDelegate}" />
+     <!-- end 额度充足情况 -->
+     
+     <endEvent id="theEnd" />
+  </process>
+  
+</definitions>

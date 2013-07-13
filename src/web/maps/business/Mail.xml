@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.business">
+	<class name="Mail" table="admin_business_mail">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="mailFrom" column="mail_from"/>
+        <property name="mailTo" column="mail_to" not-null="true" length="4000"/>
+        <property name="subject" not-null="true"/>
+        <property name="textType" not-null="true">
+        	<column name="text_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.TextType
+				</param>
+			</type>
+        </property>
+        <property name="content" type="org.hibernate.type.StringClobType"/>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="sendTime" column="send_time"/>
+        <property name="status">
+        	<column name="status" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.StatusType
+				</param>
+			</type>
+        </property>
+        <property name="valid" not-null="true"/>
+        <property name="memo" length="4000"/>
+    </class>
+</hibernate-mapping>

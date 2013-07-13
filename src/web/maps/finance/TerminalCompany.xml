@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.finance">
+	<class name="TerminalCompany" table="admin_terminal_company">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name">
+        	<column name="name" not-null="true" />
+        </property>
+        <property name="createTime" update="false">
+        	<column name="create_time"/>
+        </property>
+        <property name="contact">
+        	<column name="contact"/>
+        </property>
+        <property name="memo">
+        	<column name="memo"/>
+        </property>
+        <property name="terminalTypes">
+        	<column name="terminal_types"/>
+        </property>
+    </class>
+</hibernate-mapping>

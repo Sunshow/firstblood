@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.lehecai.admin.web.domain.finance">
+	<class name="TerminalCompanyPoint" table="admin_terminal_company_point">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="companyId">
+        	<column name="companyId" not-null="true" />
+        </property>
+        <property name="companyName">
+        	<column name="companyName" not-null="true" />
+        </property>
+        <property name="point">
+        	<column name="point"/>
+        </property>
+        <property name="lotteryType">
+        	<column name="lottery_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.lottery.LotteryType
+				</param>
+			</type>
+        </property>
+        <property name="memo">
+        	<column name="memo"/>
+        </property>
+        <property name="createTime" update="false">
+        	<column name="create_time"/>
+        </property>
+    </class>
+</hibernate-mapping>

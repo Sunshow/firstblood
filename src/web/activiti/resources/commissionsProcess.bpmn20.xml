@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions id="definitions" 
+  xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:activiti="http://activiti.org/bpmn"
+  targetNamespace="http://activiti.org/bpmn20">
+  
+  <process id="commissionTaskProcess" name="佣金派发流程">
+  
+	 <startEvent id="theStart" />
+	 <sequenceFlow id="flow1" sourceRef="theStart" targetRef="createCommissionTask" />
+    
+     <serviceTask id="createCommissionTask" name="创建佣金派发工单" 
+       activiti:delegateExpression="${createCommissionTaskDelegate}" />    
+     <sequenceFlow id="flow2" sourceRef="createCommissionTask" targetRef="customerManagerAmountGw" />
+     
+      <!-- start 客户经理额度判断 -->
+     <exclusiveGateway id="customerManagerAmountGw" name="客户经理额度判断" /> 
+     <sequenceFlow id="endFlow1" sourceRef="customerManagerAmountGw" targetRef="supervisorHandleCommissionTask">
+	     <documentation>
+	     	额度不足，等待主管处理
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!enough}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow2" sourceRef="customerManagerAmountGw" targetRef="executeCommission">
+     	 <documentation>
+	     	额度充足，执行彩金赠送
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${enough}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 客户经理额度判断 -->
+     
+     <userTask id="supervisorHandleCommissionTask" name="主管处理佣金派发工单">
+    	<extensionElements>
+		    <activiti:taskListener delegateExpression="${processTaskListener}" event="create"/>
+		</extensionElements>
+     </userTask>
+     <sequenceFlow id="flow3" sourceRef="supervisorHandleCommissionTask" targetRef="supervisorAgreeGw" />
+     
+     <!-- start 主管是否通过 -->
+     <exclusiveGateway id="supervisorAgreeGw" name="主管是否通过判断" /> 
+     <sequenceFlow id="endFlow3" sourceRef="supervisorAgreeGw" targetRef="theEnd">
+	     <documentation>
+	     	主管未通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!agree}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow4" sourceRef="supervisorAgreeGw" targetRef="supervisorAmountGw">
+     	 <documentation>
+	     	主管已通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${agree}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 主管是否通过 -->
+     
+      <!-- start 主管额度判断 -->
+     <exclusiveGateway id="supervisorAmountGw" name="主管额度判断" /> 
+     <sequenceFlow id="endFlow5" sourceRef="supervisorAmountGw" targetRef="cooHandleCommissionTask">
+	     <documentation>
+	     	额度不足，等待总监处理
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!enough}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow6" sourceRef="supervisorAmountGw" targetRef="executeCommission">
+     	 <documentation>
+	     	额度充足，执行彩金赠送
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${enough}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 主管额度判断 -->
+     
+     <userTask id="cooHandleCommissionTask" name="总监处理佣金派发工单">
+    	<extensionElements>
+		    <activiti:taskListener delegateExpression="${processTaskListener}" event="create"/>
+		</extensionElements>
+     </userTask>
+     <sequenceFlow id="flow4" sourceRef="cooHandleCommissionTask" targetRef="cooAgreeGw" />
+     
+     <!-- start 总监是否通过 -->
+     <exclusiveGateway id="cooAgreeGw" name="总监是否通过判断" /> 
+     <sequenceFlow id="endFlow7" sourceRef="cooAgreeGw" targetRef="theEnd">
+	     <documentation>
+	     	总监未通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!agree}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow8" sourceRef="cooAgreeGw" targetRef="cooAmountGw">
+     	 <documentation>
+	     	总监已通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${agree}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 总监是否通过 -->
+     
+      <!-- start 总监额度判断 -->
+     <exclusiveGateway id="cooAmountGw" name="总监额度判断" /> 
+     <sequenceFlow id="endFlow9" sourceRef="cooAmountGw" targetRef="ceoHandleCommissionTask">
+	     <documentation>
+	     	额度不足，等待ceo处理
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!enough}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow10" sourceRef="cooAmountGw" targetRef="executeCommission">
+     	 <documentation>
+	     	额度充足，执行佣金派发
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${enough}</conditionExpression>
+     </sequenceFlow>
+     <!-- end 总监额度判断 -->
+     
+     <userTask id="ceoHandleCommissionTask" name="ceo处理佣金派发工单">
+    	<extensionElements>
+		    <activiti:taskListener delegateExpression="${processTaskListener}" event="create"/>
+		</extensionElements>
+     </userTask>
+     <sequenceFlow id="flow5" sourceRef="ceoHandleCommissionTask" targetRef="ceoAgreeGw" />
+     
+     <!-- start ceo是否通过 -->
+     <exclusiveGateway id="ceoAgreeGw" name="ceo是否通过判断" /> 
+     <sequenceFlow id="endFlow11" sourceRef="ceoAgreeGw" targetRef="theEnd">
+	     <documentation>
+	     	ceo未通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${!agree}</conditionExpression>
+     </sequenceFlow>
+     <sequenceFlow id="endFlow12" sourceRef="ceoAgreeGw" targetRef="executeCommission">
+     	 <documentation>
+	     	ceo已通过
+	     </documentation>
+     	<conditionExpression xsi:type="tFormalExpression">${agree}</conditionExpression>
+     </sequenceFlow>
+     <!-- end ceo是否通过 -->
+     
+     <serviceTask id="executeCommission" name="执行佣金派发" 
+       activiti:delegateExpression="${executeCommissionDelegate}" />    
+     <sequenceFlow id="flow9" sourceRef="executeCommission" targetRef="theEnd" />
+     <endEvent id="theEnd" />
+  </process>
+  
+</definitions>

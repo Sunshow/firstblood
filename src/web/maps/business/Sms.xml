@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.business">
+	<class name="Sms" table="admin_business_sms">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="smsFrom" column="sms_from"/>
+        <property name="smsTo" column="sms_to" not-null="true" length="4000"/>
+        <property name="content"/>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="sendTime" column="send_time"/>
+        <property name="status">
+        	<column name="status" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.admin.web.enums.StatusType
+				</param>
+			</type>
+        </property>
+        <property name="valid" not-null="true"/>
+        <property name="memo" length="4000"/>
+    </class>
+</hibernate-mapping>

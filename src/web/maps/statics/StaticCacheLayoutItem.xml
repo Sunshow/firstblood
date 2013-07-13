@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.statics">
+	<class name="StaticCacheLayoutItem" table="admin_static_cache_layout_item">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="staticCacheId" column="static_cache_id"/>
+        <property name="layoutId" column="layout_id"/>
+    </class>
+</hibernate-mapping>

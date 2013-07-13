@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.cms">
+	<class name="ResourceCategory" table="admin_cms_resource_category">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name"/>
+        <property name="reLevel" column="re_level"/>
+        <property name="parentID" column="parent_id"/>
+        <property name="orderView" column="order_view"/>
+        <property name="valid"/>
+        <property name="memo" length="4000"/>
+        <property name="directory"/>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.agent">
+	<class name="AgentLinkType" table="admin_agent_linktype">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name" not-null="true"/>
+        <property name="template" not-null="true"/>
+        <property name="valid" not-null="true"/>
+    </class>
+</hibernate-mapping>

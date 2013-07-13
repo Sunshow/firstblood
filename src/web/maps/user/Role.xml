@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.user">
+	<class name="Role" table="admin_role" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="name" length="16" not-null="true"/>
+        <property name="valid" not-null="true"/>
+        <property name="restriction" not-null="true"/>
+        <property name="restrictionIp" column="restriction_ip" length="16"/>
+        <property name="memo"/>
+        <property name="permission" length="4000"/>
+    </class>
+</hibernate-mapping>

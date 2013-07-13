@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.lehecai.admin.web.domain.finance">
+	<class name="DrawLoss" table="admin_draw_loss">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="lotteryType">
+        	<column name="lottery_type" precision="22" scale="0" not-null="true" />
+			<type name="com.lehecai.admin.web.hibernate.usertype.IntegerBeanLabelUserType">
+				<param name="targetClass">
+					com.lehecai.core.lottery.LotteryType
+				</param>
+			</type>
+        </property>
+        <property name="accountCheckType">
+        	<column name="account_check_type" not-null="true"/>
+        </property>
+        <property name="amountCheckDate">
+        	<column name="amount_check_date"/>
+        </property>
+        <property name="drawMoney">
+        	<column name="draw_money"/>
+        </property>
+        <property name="drawPlanMoney">
+        	<column name="draw_plan_money"/>
+        </property>
+        <property name="drawLossMoney">
+        	<column name="draw_loss_money"/>
+        </property>
+        <property name="memo">
+        	<column name="memo"/>
+        </property>
+        <property name="userId">
+        	<column name="user_id" not-null="true" />
+        </property>
+        <property name="createTime" update="false">
+        	<column name="create_time"/>
+        </property>
+    </class>
+</hibernate-mapping>
