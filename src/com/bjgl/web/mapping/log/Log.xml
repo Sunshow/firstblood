@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.bjgl.web.entity.log">
+    <class name="Log" table="bjgl_log" dynamic-insert="true" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="userName" column="user_name"/>
+        <property name="name"/>
+        <property name="logType">
+            <column name="log_type" precision="22" scale="0" not-null="true"/>
+            <type name="com.bjgl.web.hibernate.usertype.IntegerBeanLabelUserType">
+                <param name="targetClass">
+                    com.bjgl.web.enums.LogType
+                </param>
+            </type>
+        </property>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="url"/>
+        <property name="actionName" column="action_name"/>
+        <property name="params"/>
+        <property name="remoteIP" column="remote_ip"/>
+    </class>
+</hibernate-mapping>

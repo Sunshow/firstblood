@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+       default-autowire="byName">
+
+    <bean id="loginAction" class="com.bjgl.web.action.user.LoginAction" scope="prototype"/>
+    <bean id="mainAction" class="com.bjgl.web.action.user.MainAction" scope="prototype"/>
+    <bean id="logoutAction" class="com.bjgl.web.action.user.LogoutAction" scope="prototype"/>
+    <bean id="userAction" class="com.bjgl.web.action.user.UserAction" scope="prototype"/>
+    <bean id="roleAction" class="com.bjgl.web.action.user.RoleAction" scope="prototype"/>
+    <bean id="menuAction" class="com.bjgl.web.action.user.MenuAction" scope="prototype"/>
+    <bean id="permissionAction" class="com.bjgl.web.action.user.PermissionAction" scope="prototype"/>
+    <bean id="permissionItemAction" class="com.bjgl.web.action.user.PermissionItemAction" scope="prototype"/>
+    <bean id="logAction" class="com.bjgl.web.action.log.LogAction" scope="prototype"/>
+</beans>

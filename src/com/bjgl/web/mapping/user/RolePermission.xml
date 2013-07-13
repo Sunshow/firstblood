@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.bjgl.web.entity.user">
+    <class name="RolePermission" table="bjgl_role_permission" dynamic-insert="true" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="roleId" column="role_id" not-null="true"/>
+        <property name="permissionId" column="permission_id" not-null="true"/>
+        <property name="permissionItemIds" column="permission_item_ids"/>
+    </class>
+</hibernate-mapping>

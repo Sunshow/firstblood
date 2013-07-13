@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd" >
+
+<struts>
+
+    <package name="default" extends="struts-default">
+        <interceptors>
+            <interceptor name="logInterceptor"
+                         class="com.bjgl.web.interceptor.LogInterceptor"/>
+            <interceptor name="handleLogInterceptor"
+                         class="com.bjgl.web.interceptor.HandleLogInterceptor"/>
+            <interceptor name="userSessionInterceptor"
+                         class="com.bjgl.web.interceptor.UserSessionInterceptor"/>
+            <interceptor-stack name="userSessionStack">
+                <interceptor-ref name="completeStack"/>
+                <interceptor-ref name="logInterceptor"/>
+                <interceptor-ref name="userSessionInterceptor"/>
+            </interceptor-stack>
+            <interceptor-stack name="handleUserSessionStack">
+                <interceptor-ref name="completeStack"/>
+                <interceptor-ref name="handleLogInterceptor"/>
+                <interceptor-ref name="userSessionInterceptor"/>
+            </interceptor-stack>
+        </interceptors>
+        <global-results>
+            <result name="success">/WEB-INF/jsp/success.jsp</result>
+            <result name="failure">/WEB-INF/jsp/failure.jsp</result>
+            <result name="unauthorized">/WEB-INF/jsp/unauthorized.jsp</result>
+            <result name="index">/parentDirect.jsp</result>
+            <result name="input">/WEB-INF/jsp/paramsError.jsp</result>
+            <result name="multiconfirm">/WEB-INF/jsp/multiconfirmInfo.jsp</result>
+        </global-results>
+    </package>
+
+    <package name="login" extends="default">
+        <action name="login" class="loginAction">
+            <interceptor-ref name="completeStack"/>
+            <interceptor-ref name="handleLogInterceptor"/>
+            <result name="index">/index.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+        <action name="main" class="mainAction">
+            <interceptor-ref name="completeStack"/>
+            <interceptor-ref name="handleLogInterceptor"/>
+            <result name="login">/WEB-INF/jsp/login.jsp</result>
+        </action>
+        <action name="logout" class="logoutAction">
+            <interceptor-ref name="completeStack"/>
+            <interceptor-ref name="handleLogInterceptor"/>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+    </package>
+
+    <package name="user" extends="default" namespace="/user">
+        <action name="user" class="userAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/user/userList.jsp</result>
+            <result name="inputForm">/WEB-INF/jsp/user/userInput.jsp</result>
+            <result name="view">/WEB-INF/jsp/user/userView.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+        <action name="role" class="roleAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/user/roleList.jsp</result>
+            <result name="inputForm">/WEB-INF/jsp/user/roleInput.jsp</result>
+            <result name="view">/WEB-INF/jsp/user/roleView.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+        <action name="menu" class="menuAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/user/menuList.jsp</result>
+            <result name="inputForm">/WEB-INF/jsp/user/menuInput.jsp</result>
+            <result name="view">/WEB-INF/jsp/user/menuView.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+        <action name="permission" class="permissionAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/user/permissionList.jsp</result>
+            <result name="inputForm">/WEB-INF/jsp/user/permissionInput.jsp</result>
+            <result name="view">/WEB-INF/jsp/user/permissionView.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+        <action name="permissionItem" class="permissionItemAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/user/permissionItemList.jsp</result>
+            <result name="inputForm">/WEB-INF/jsp/user/permissionItemInput.jsp</result>
+            <result name="view">/WEB-INF/jsp/user/permissionItemView.jsp</result>
+            <result name="forward" type="redirect">${forwardUrl}</result>
+        </action>
+    </package>
+
+    <package name="log" extends="default" namespace="/log">
+        <action name="log" class="logAction">
+            <interceptor-ref name="userSessionStack"/>
+            <result name="list">/WEB-INF/jsp/log/logList.jsp</result>
+            <result name="view">/WEB-INF/jsp/log/logView.jsp</result>
+        </action>
+    </package>
+
+</struts>

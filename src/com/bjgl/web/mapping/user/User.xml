@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.bjgl.web.entity.user">
+    <class name="User" table="bjgl_user" dynamic-insert="true" dynamic-update="true">
+        <id name="id">
+            <generator class="native"></generator>
+        </id>
+        <property name="userName" column="user_name" not-null="true" unique="true"/>
+        <property name="password" not-null="true"/>
+        <property name="name" not-null="true"/>
+        <property name="tel"/>
+        <property name="email"/>
+        <property name="createTime" column="create_time" not-null="true" update="false"/>
+        <property name="updateTime" column="update_time" not-null="true"/>
+        <property name="loginTime" column="login_time"/>
+        <property name="lastLoginTime" column="last_login_time"/>
+        <property name="valid" not-null="true"/>
+        <property name="memo"/>
+        <property name="roleID" column="role_id" not-null="true"/>
+    </class>
+</hibernate-mapping>
