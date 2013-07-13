@@ -39,21 +39,13 @@ public class LogAction extends BaseAction {
 	public String handle() {
 		logger.info("进入查询日志信息列表");
 		
-		if (beginDate == null) {
-			beginDate = getDefaultQueryBeginDate();
-		}
-		
 		return "list";
 	}
 	
 	public String query() {
 		logger.info("进入查询日志信息列表");
 		HttpServletRequest request = ServletActionContext.getRequest();
-		
-		if (beginDate == null) {
-			beginDate = getDefaultQueryBeginDate();
-		}
-		
+
 		logs = logService.list(userName, name, beginDate, endDate, logTypeId, url, actionName, params, ip,super.getPageBean());
 		PageBean pageBean = logService.getPageBean(userName, name, beginDate, endDate, logTypeId, url, actionName, params, ip,super.getPageBean());
 		super.setPageString(PageUtil.getPageString(request, pageBean));

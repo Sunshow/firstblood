@@ -17,7 +17,7 @@
 			width:80%;
 		}
 	</style>
-	<script type="text/javascript" src="${ctx}/js/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="${ctx}/js/jquery.min.js"></script>
 	<script type="text/javascript" src="${ctx}/js/jquery.validate.js"></script>
 	<script type="text/javascript" src="${ctx}/js/jquery.metadata.js"></script>
 	<script type="text/javascript" src="${ctx}/js/easyui/jquery.easyui.min.js"></script>
