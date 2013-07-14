@@ -35,6 +35,9 @@
                      pointcut-ref="interceptorPointCuts"/>
     </aop:config>
 
+    <bean id="userService" class="com.bjgl.web.service.impl.user.UserServiceImpl">
+        <property name="dao" ref="userDao" />
+    </bean>
     <bean id="permissionService" class="com.bjgl.web.service.impl.user.PermissionServiceImpl"/>
     <bean id="logService" class="com.bjgl.web.service.impl.log.LogServiceImpl"/>
 

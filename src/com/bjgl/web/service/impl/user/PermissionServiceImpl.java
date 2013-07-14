@@ -231,27 +231,6 @@ public class PermissionServiceImpl implements PermissionService {
         return null;
 	}
 
-	public User getUser(Long ID){
-		return userDao.findById(ID);
-	}
-
-	public void delUser(User user){
-		userDao.delete(user.getId());
-	}
-
-	public User getByUserName(String userName){
-		return userDao.getByUsername(userName);
-	}
-	
-	public User login(String userName, String password){
-		User user = userDao.getByUsername(userName);
-		if(user != null && user.getId() != null){
-			if(CoreStringUtils.md5(password, CharsetConstant.CHARSET_UTF8).equals(user.getPassword())){
-				return user;
-			}
-		}
-		return null;
-	}
 	
 	public void manage(User user, UserRole userRole){
         /*

@@ -5,6 +5,7 @@ import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.*;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.UserService;
 import com.bjgl.web.utils.CaptchaServiceSingleton;
 import com.bjgl.web.utils.CoreHttpUtils;
 import com.octo.captcha.service.CaptchaServiceException;
@@ -16,6 +17,8 @@ import java.util.*;
 
 public class LoginAction extends BaseAction {
     private static final long serialVersionUID = -8830679912602886965L;
+
+    private UserService userService;
 
     private PermissionService permissionService;
 
@@ -69,7 +72,7 @@ public class LoginAction extends BaseAction {
                 return "index";
             }
         }
-        User user = permissionService.login(this.getUsername(), this.getPassword());
+        User user = userService.login(this.getUsername(), this.getPassword());
         if (user == null) {
             logger.error("用户名或密码错误");
             super.setErrorMessage("用户名或密码错误");
@@ -297,5 +300,9 @@ public class LoginAction extends BaseAction {
 
     public void setEnableVerifyCode(Boolean enableVerifyCode) {
         this.enableVerifyCode = enableVerifyCode;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

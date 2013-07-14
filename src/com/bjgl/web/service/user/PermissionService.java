@@ -51,10 +51,6 @@ public interface PermissionService {
 	
 	
 	void manage(User user);
-	User getUser(Long ID);
-	void delUser(User user);
-	User getByUserName(String userName);
-	User login(String userName, String password);
 	/**
 	 * 封装多条件查询分页信息
 	 * @param userName	用户名

@@ -49,7 +49,10 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
 
     @Override
     public void delete(Serializable id) {
-        this.getHibernateTemplate().delete(this.findById(id));
+        T instance = this.findById(id);
+        if (instance != null) {
+            this.getHibernateTemplate().delete(instance);
+        }
     }
 
     @Override

@@ -40,6 +40,7 @@
             </value>
         </property>
     </bean>
+
     <bean id="userDao" class="com.bjgl.web.dao.impl.user.UserDaoImpl"/>
     <bean id="roleDao" class="com.bjgl.web.dao.impl.user.RoleDaoImpl"/>
     <bean id="menuDao" class="com.bjgl.web.dao.impl.user.MenuDaoImpl"/>

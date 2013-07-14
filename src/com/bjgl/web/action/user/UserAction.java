@@ -6,6 +6,7 @@ import com.bjgl.web.entity.user.Role;
 import com.bjgl.web.entity.user.User;
 import com.bjgl.web.entity.user.UserRole;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.UserService;
 import com.bjgl.web.utils.CharsetConstant;
 import com.bjgl.web.utils.CoreDateUtils;
 import com.bjgl.web.utils.CoreStringUtils;
@@ -22,6 +23,8 @@ import java.util.List;
 
 public class UserAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
+
+    private UserService userService;
 
 	private PermissionService permissionService;
 	private static final String NEED_MODIFY_PASSWORD = "1";
@@ -109,7 +112,7 @@ public class UserAction extends BaseAction {
 			if (user.getId() != null ) {//修改
 				if (!StringUtils.isEmpty(pwdFlag)) {
 					try {
-						pUser = permissionService.getUser(user.getId());
+						pUser = userService.findById(user.getId());
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 						super.setErrorMessage(e.getMessage());
@@ -164,7 +167,7 @@ public class UserAction extends BaseAction {
 				} else {
 					User sUser = null;
 					try {
-						sUser = permissionService.getByUserName(user.getUsername());
+						sUser = userService.findByUsername(user.getUsername());
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 						super.setErrorMessage(e.getMessage());
@@ -228,7 +231,7 @@ public class UserAction extends BaseAction {
 	public String input() {
 		if (user != null && user.getId() != null) {
 			try {
-				user = permissionService.getUser(user.getId());
+				user = userService.findById(user.getId());
 				List<UserRole> urList = permissionService.getRolesByUser(user);
 				if(urList != null && urList.size() > 0){
 					UserRole ur = urList.get(0);
@@ -260,7 +263,7 @@ public class UserAction extends BaseAction {
 	public String view() {
 		logger.info("进入查看用户详情");
 		if (user != null && user.getId() != null) {
-			user = permissionService.getUser(user.getId());
+			user = userService.findById(user.getId());
 			role = permissionService.getRole(user.getRoleID());
 		} else {
 			logger.error("查看用户详情，编码为空");
@@ -274,8 +277,7 @@ public class UserAction extends BaseAction {
 	public String del() {
 		logger.info("进入删除用户");
 		if (user != null && user.getId() != null) {
-			user = permissionService.getUser(user.getId());
-			permissionService.delUser(user);
+            userService.delete(user.getId());
 		} else {
 			logger.error("删除用户，编码为空");
 			super.setErrorMessage("删除用户，编码不能为空");
@@ -290,7 +292,7 @@ public class UserAction extends BaseAction {
 		logger.info("进入检验用户名是否存在");
 		HttpServletResponse response = ServletActionContext.getResponse();
 		boolean flag = true;
-		User sUser = permissionService.getByUserName(user.getUsername());
+		User sUser = userService.findByUsername(user.getUsername());
 		if (sUser != null && sUser.getId() != null) {
 			flag = false;
 		}
@@ -392,4 +394,8 @@ public class UserAction extends BaseAction {
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 }

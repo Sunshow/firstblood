@@ -5,5 +5,5 @@ import com.bjgl.web.entity.user.User;
 
 public interface UserDao extends BaseDao<User> {
 
-	public User getByUsername(String username);
+	public User findByUsername(String username);
 }

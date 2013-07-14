@@ -9,7 +9,7 @@ import java.util.List;
 public class UserDaoImpl extends AbstractBaseDaoImpl<User> implements UserDao {
 
     @Override
-    public User getByUsername(String username) {
+    public User findByUsername(String username) {
         User example = new User();
         example.setUsername(username);
         List<User> userList = this.findByExample(example, null);
