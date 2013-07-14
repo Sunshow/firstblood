@@ -57,13 +57,12 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
         return this.getHibernateTemplate().get(this.clazz, id);
     }
 
-    @Override
-    public PageBean getPageBean(final T example, final PageBean pageBean) {
+    protected PageBean getPageBean(final Class<T> clazz, final Example example, final PageBean pageBean) {
         return this.getHibernateTemplate().execute(new HibernateCallback<PageBean>() {
             @Override
             public PageBean doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(clazz);
-                criteria.add(Example.create(example));
+                criteria.add(example);
                 criteria.setProjection(Projections.rowCount());
 
                 int totalCount = ((Long) criteria.uniqueResult()).intValue();
@@ -76,14 +75,18 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
         });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<T> findByExample(final T example, final PageBean pageBean, final Order... orders) {
+    public PageBean getPageBean(T example, PageBean pageBean) {
+        return this.getPageBean(clazz, Example.create(example), pageBean);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<T> findByExample(final Class<T> clazz, final Example example, final PageBean pageBean, final Order... orders) {
         return this.getHibernateTemplate().executeFind(new HibernateCallback<Object>() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(clazz);
-                criteria.add(Example.create(example));
+                criteria.add(example);
 
                 if (orders != null) {
                     for (int i = 0; i < orders.length; i++) {
@@ -96,6 +99,11 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
                 return criteria.list();
             }
         });
+    }
+
+    @Override
+    public List<T> findByExample(T example, PageBean pageBean, Order... orders) {
+        return this.findByExample(clazz, Example.create(example), pageBean, orders);
     }
 
     @SuppressWarnings("unchecked")
