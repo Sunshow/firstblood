@@ -2,6 +2,8 @@ package com.bjgl.web.action;
 
 
 import com.bjgl.web.bean.PageBean;
+import com.bjgl.web.exception.ParameterValidateException;
+import com.bjgl.web.exception.StrutsRequestException;
 import com.opensymphony.xwork2.ActionSupport;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -14,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -40,7 +43,32 @@ public class BaseAction extends ActionSupport implements SessionAware {
         Class<?>[] c = null;
         Method m = this.getClass().getMethod(method, c);
         Object[] o = null;
-        String result = (String) m.invoke(this, o);
+        String result = null;
+        try {
+            result = (String) m.invoke(this, o);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof StrutsRequestException) {
+                StrutsRequestException ex = (StrutsRequestException)e.getTargetException();
+                logger.error("Struts Request Error", ex);
+                this.addActionError(this.getText("error.message"));
+                this.setErrorMessage(ex.getMessage());
+                if (StringUtils.isBlank(ex.getForward())) {
+                    result = ERROR;
+                } else {
+                    result = ex.getForward();
+                }
+            } else {
+                logger.error(e.getMessage(), e);
+                this.addActionError(this.getText("error.message"));
+                this.setErrorMessage(e.getTargetException().getMessage());
+                result = ERROR;
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            this.addActionError(this.getText("error.message"));
+            this.setErrorMessage(e.getMessage());
+            result = ERROR;
+        }
         logger.info("3 Return Result:" + result);
         logger.info("4 Exit Class : " + this.getClass());
         return result;
@@ -53,6 +81,17 @@ public class BaseAction extends ActionSupport implements SessionAware {
             logger.error("ActionError", e);
             this.addActionError(this.getText("error.message"));
             return ERROR;
+        }
+    }
+
+    protected void emptyCheck(Object o, String forward, String message) {
+        if (o == null) {
+            throw new ParameterValidateException(message, forward);
+        }
+        if (o instanceof String) {
+            if (StringUtils.isBlank((String)o)) {
+                throw new ParameterValidateException(message, forward);
+            }
         }
     }
 

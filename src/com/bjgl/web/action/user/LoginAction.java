@@ -30,25 +30,18 @@ public class LoginAction extends BaseAction {
 
     private Boolean enableVerifyCode;
 
+    private final static String INDEX = "index";
+
     @SuppressWarnings("unchecked")
     public String handle() {
         logger.info("进入验证登录");
-        if (StringUtils.isBlank(this.getUsername())) {
-            logger.error("用户名为空");
-            super.setErrorMessage("用户名不能为空");
-            return "index";
-        }
-        if (StringUtils.isBlank(this.getPassword())) {
-            logger.error("密码为空");
-            super.setErrorMessage("密码不能为空");
-            return "index";
-        }
+
+        this.emptyCheck(this.getUsername(), INDEX, "用户名不能为空");
+        this.emptyCheck(this.getPassword(), INDEX, "密码不能为空");
+
         if (this.getEnableVerifyCode()) {
-            if (StringUtils.isBlank(verifyCode)) {
-                logger.error("验证码为空");
-                super.setErrorMessage("验证码不能为空");
-                return "index";
-            }
+            this.emptyCheck(this.getVerifyCode(), INDEX, "验证码不能为空");
+
             Boolean isVerifyCodeRight = Boolean.FALSE;
             HttpServletRequest request = ServletActionContext.getRequest();
             String captchaId = null;
