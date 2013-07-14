@@ -19,11 +19,13 @@ insert into bjgl_permission_item (name, permission_id, order_view, method_name, 
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查看', 1, '0', 'view', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('删除', 1, '0', 'del', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('验证用户名', 1, '0', 'check', 1, '');
+insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查询', 1, '0', 'query', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('添加修改', 2, '0', 'manage', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('输入', 2, '0', 'input', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查看', 2, '0', 'view', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('删除', 2, '0', 'del', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('权限列表', 2, '0', 'findPermissions', 1, '');
+insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('复制', 2, '0', 'copy', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('添加修改', 3, '0', 'manage', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('输入', 3, '0', 'input', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查看', 3, '0', 'view', 1, '');
@@ -37,6 +39,7 @@ insert into bjgl_permission_item (name, permission_id, order_view, method_name, 
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查看', 5, '0', 'view', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('删除', 5, '0', 'del', 1, '');
 insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查看', 6, '0', 'view', 1, '');
+insert into bjgl_permission_item (name, permission_id, order_view, method_name, valid, memo) values ('查询', 6, '0', 'query', 1, '');
 commit;
 delete from bjgl_role;
 alter table bjgl_role auto_increment=1;
@@ -51,5 +54,5 @@ alter table bjgl_user_role auto_increment=1;
 insert into bjgl_user_role (user_id, role_id) values (1, 1);
 commit;
 delete from bjgl_role_permission;
-INSERT INTO `bjgl_role_permission` VALUES (1,1,1,'1,2,3,4,5'),(2,1,2,'6,7,8,9,10'),(3,1,3,'11,12,13,14'),(4,1,4,'15,16,17,18'),(5,1,5,'19,20,21,22'),(6,1,6,'23');
+INSERT INTO `bjgl_role_permission` VALUES (1,1,1,'1,2,3,4,5,6'),(2,1,2,'7,8,9,10,11,12'),(3,1,3,'13,14,15,16'),(4,1,4,'17,18,19,20'),(5,1,5,'21,22,23,24'),(6,1,6,'25,26');
 commit;

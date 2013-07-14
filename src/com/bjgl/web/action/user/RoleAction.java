@@ -34,12 +34,12 @@ public class RoleAction extends BaseAction {
 	private List<Long> permissions;
 	private List<Long> permissionsItem;
 	
-	private List<Role> roles;
+	private List<Role> roleList;
 	
 	public String handle(){
 		logger.info("进入查询角色");
-		roles = roleService.findByExample(role, null);
-		return "list";
+        roleList = roleService.findByExample(role, null);
+		return LIST;
 	}
 	
 	public String manage() {
@@ -368,13 +368,16 @@ public class RoleAction extends BaseAction {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	public List<Role> getRoles() {
-		return roles;
-	}
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-	public PermissionService getPermissionService() {
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
+    }
+
+    public PermissionService getPermissionService() {
 		return permissionService;
 	}
 	public void setPermissionService(PermissionService permissionService) {

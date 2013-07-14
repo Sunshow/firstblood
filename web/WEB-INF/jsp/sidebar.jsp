@@ -1,12 +1,6 @@
 <%@page contentType="text/html; charset=utf-8" %>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<style type="text/css">
-    .accordion .accordion-inner {
-        padding-left: 50px;
-    }
-</style>
-
 <div class="accordion" id="menu_list">
     <c:forEach var="menuBean" items="${MENU_BEAN_LIST}">
         <c:if test="${menuBean.menu.valid}">

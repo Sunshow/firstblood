@@ -17,14 +17,14 @@ public class PermissionAction extends BaseAction {
 	private Permission permission;
 	private Menu menu;
 	
-	private List<Permission> permissions;
+	private List<Permission> permissionList;
 	
 	public String handle(){
 		logger.info("进入查询权限列表");
 		if (permission != null && permission.getMenuId() != null) {
 			menu = menuService.findById(permission.getMenuId());
 		}
-		permissions = permissionService.findByExample(permission, null);
+        permissionList = permissionService.findByExample(permission, null);
 		return "list";
 	}
 	
@@ -109,15 +109,15 @@ public class PermissionAction extends BaseAction {
 		this.permission = permission;
 	}
 
-	public List<Permission> getPermissions() {
-		return permissions;
-	}
+    public List<Permission> getPermissionList() {
+        return permissionList;
+    }
 
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
-	}
+    public void setPermissionList(List<Permission> permissionList) {
+        this.permissionList = permissionList;
+    }
 
-	public Menu getMenu() {
+    public Menu getMenu() {
 		return menu;
 	}
 

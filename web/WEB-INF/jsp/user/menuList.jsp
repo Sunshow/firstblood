@@ -39,7 +39,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <s:iterator value="menuList" status="index">
+                <s:iterator value="menuList">
                     <tr>
                         <td>${id}</td>
                         <td><a href="<c:url value="/user/menu.do?action=view&menu.id=${id}"/>">${name}</a></td>
@@ -47,8 +47,8 @@
                         <td>${orderView}</td>
                         <td>${valid}</td>
                         <td>${memo}</td>
-                        <td><a href="${ctx}/user/menu.do?action=input&menu.id=${id}">修改</a></td>
-                        <td><a href="${ctx}/user/permission.do?permission.menuId=${id}">权限管理</a></td>
+                        <td><a href="<c:url value="/user/menu.do?action=input&menu.id=${id}"/>">修改</a></td>
+                        <td><a href="<c:url value="/user/permission.do?permission.menuId=${id}"/>">权限管理</a></td>
                     </tr>
                 </s:iterator>
                 </tbody>
