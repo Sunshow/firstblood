@@ -39,16 +39,7 @@ public interface PermissionService {
 	void delBatch(List<RolePermission> rolePremissionList);
 	List<RolePermission> getPermissionsByRole(Role role);
 	
-	void manage(Role role);
-	void manage(Role role,List<RolePermission> rolePermissions);
-	List<Role> listRoles(Role role); 
-	Role getRole(Long ID);
-	void del(Role role);
-	
-	void manage(UserRole userRole);
-	void delUserRole(UserRole userRole);
-	List<UserRole> getRolesByUser(User user);
-	
+    public void manage(Role role, List<RolePermission> rolePermissions);
 	
 	void manage(User user);
 	/**

@@ -42,7 +42,7 @@
         <action name="main" class="mainAction">
             <interceptor-ref name="completeStack"/>
             <interceptor-ref name="handleLogInterceptor"/>
-            <result name="login">/WEB-INF/jsp/login.jsp</result>
+            <result name="main">/WEB-INF/jsp/main.jsp</result>
         </action>
         <action name="logout" class="logoutAction">
             <interceptor-ref name="completeStack"/>

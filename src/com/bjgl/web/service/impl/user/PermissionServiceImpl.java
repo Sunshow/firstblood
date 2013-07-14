@@ -97,13 +97,14 @@ public class PermissionServiceImpl implements PermissionService {
 
 	public void manage(Role role){
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void manage(Role role, List<RolePermission> rolePermissions) {
 
         // 先保存角色
-        Role saveRole = roleDao.mergePK(role);
+        roleDao.save(role);
+        Role saveRole = role;
 
         // 先取出已有的角色权限
         List<RolePermission> srcRolePermissions = this.getPermissionsByRole(role);
@@ -185,32 +186,6 @@ public class PermissionServiceImpl implements PermissionService {
         for (RolePermission rolePermission : mergeRolePermissionList) {
             rolePermissionDao.merge(rolePermission);
         }
-	}
-
-	public List<Role> listRoles(Role role){
-		return roleDao.list(role);
-	}
-
-	public Role getRole(Long ID){
-		return roleDao.get(ID);
-	}
-
-	public void del(Role role){
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void manage(UserRole userRole){
-		userRoleDao.merge(userRole);
-	}
-
-	public void delUserRole(UserRole userRole){
-		// TODO Auto-generated method stub
-		
-	}
-
-	public List<UserRole> getRolesByUser(User user){
-		return userRoleDao.getRolesByUser(user);
 	}
 
 	public void manage(User user){

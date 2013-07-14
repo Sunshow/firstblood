@@ -26,7 +26,12 @@ public class BaseAction extends ActionSupport implements SessionAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private String action = "handle";
+    protected final static String INDEX = "index";
+    protected final static String INPUT = "input";
+    protected final static String HANDLE = "handle";
+    protected final static String FORWARD = "forward";
+
+    private String action = HANDLE;
     private String forwardUrl = "";
     private String errorMessage;
     private String successMessage;

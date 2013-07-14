@@ -6,6 +6,8 @@ import com.bjgl.web.entity.user.Role;
 import com.bjgl.web.entity.user.User;
 import com.bjgl.web.entity.user.UserRole;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.RoleService;
+import com.bjgl.web.service.user.UserRoleService;
 import com.bjgl.web.service.user.UserService;
 import com.bjgl.web.utils.CharsetConstant;
 import com.bjgl.web.utils.CoreDateUtils;
@@ -25,6 +27,8 @@ public class UserAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
 
     private UserService userService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
 	private PermissionService permissionService;
 	private static final String NEED_MODIFY_PASSWORD = "1";
@@ -52,7 +56,7 @@ public class UserAction extends BaseAction {
 	 */
 	public String handle() {
 		logger.info("进入查询用户");
-		roles = permissionService.listRoles(null);//查询所有角色
+		roles = roleService.findByExample(null, null);//查询所有角色
 		if (roles == null || roles.size() == 0) {
 			logger.info("查询用户，暂无角色");
 		}
@@ -84,7 +88,7 @@ public class UserAction extends BaseAction {
 		super.setPageString(PageUtil.getPageString(request, pageBean));
 		
 		try {
-			roles = permissionService.listRoles(null);
+			roles = roleService.findByExample(null, null);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			super.setErrorMessage(e.getMessage());
@@ -150,7 +154,7 @@ public class UserAction extends BaseAction {
 					return "failure";
 				}
 				try {
-					List<UserRole> userRoleList = permissionService.getRolesByUser(pUser);
+					List<UserRole> userRoleList = userRoleService.findByUserId(pUser.getId());
 					if(userRoleList!=null && userRoleList.size() > 0){
 						ur = userRoleList.get(0);
 					}
@@ -197,7 +201,6 @@ public class UserAction extends BaseAction {
 				user.setPassword(CoreStringUtils.md5(user.getPassword(), CharsetConstant.CHARSET_UTF8));
 				user.setCreateTime(new Date());
 				user.setUpdateTime(new Date());
-				user.setRoleID(new Long(0));
 				if (checkValid != null && "on".equals(checkValid)) {
 					user.setValid(true);
 				}
@@ -206,7 +209,6 @@ public class UserAction extends BaseAction {
 			if(ur == null){
 				ur = new UserRole();
 			}
-			ur.setRoleId(user.getRole().getId());
 			try {
 				permissionService.manage(pUser,ur);
 			} catch (Exception e) {
@@ -232,12 +234,12 @@ public class UserAction extends BaseAction {
 		if (user != null && user.getId() != null) {
 			try {
 				user = userService.findById(user.getId());
-				List<UserRole> urList = permissionService.getRolesByUser(user);
+				List<UserRole> urList = userRoleService.findByUserId(user.getId());
 				if(urList != null && urList.size() > 0){
 					UserRole ur = urList.get(0);
 					Role role = new Role();
 					role.setId(ur.getRoleId());
-					user.setRole(role);
+					//user.setRole(role);
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -246,7 +248,7 @@ public class UserAction extends BaseAction {
 			}
 		}
 		try {
-			roles = permissionService.listRoles(role);
+			roles = roleService.findByExample(role, null);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			super.setErrorMessage(e.getMessage());
@@ -264,7 +266,7 @@ public class UserAction extends BaseAction {
 		logger.info("进入查看用户详情");
 		if (user != null && user.getId() != null) {
 			user = userService.findById(user.getId());
-			role = permissionService.getRole(user.getRoleID());
+			//role = roleService.findById(user.getRoleID());
 		} else {
 			logger.error("查看用户详情，编码为空");
 			super.setErrorMessage("查看用户详情，编码为空");
@@ -397,5 +399,13 @@ public class UserAction extends BaseAction {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    public void setUserRoleService(UserRoleService userRoleService) {
+        this.userRoleService = userRoleService;
     }
 }

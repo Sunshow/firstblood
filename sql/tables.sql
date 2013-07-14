@@ -23,12 +23,10 @@ CREATE TABLE `bjgl_user` (
   `last_login_time` datetime DEFAULT NULL,
   `valid` smallint(6) NOT NULL DEFAULT '1',
   `memo` varchar(255) DEFAULT NULL,
-  `role_id` bigint(20) NOT NULL,
   `tel` varchar(16) DEFAULT NULL,
   `email` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_username` (`username`),
-  KEY `idx_role` (`role_id`),
   KEY `idx_valild` (`valid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

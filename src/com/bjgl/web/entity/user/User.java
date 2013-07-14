@@ -19,8 +19,6 @@ public class User implements Serializable {
     private Date lastLoginTime;
     private Boolean valid;
     private String memo;
-    private Long roleID;
-    private Role role;
 
     public Long getId() {
         return id;
@@ -92,22 +90,6 @@ public class User implements Serializable {
 
     public void setLoginTime(Date loginTime) {
         this.loginTime = loginTime;
-    }
-
-    public Long getRoleID() {
-        return roleID;
-    }
-
-    public void setRoleID(Long roleID) {
-        this.roleID = roleID;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 
     public String getTel() {

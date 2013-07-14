@@ -19,6 +19,5 @@
         <property name="lastLoginTime" column="last_login_time"/>
         <property name="valid" not-null="true"/>
         <property name="memo"/>
-        <property name="roleID" column="role_id" not-null="true"/>
     </class>
 </hibernate-mapping>

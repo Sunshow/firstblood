@@ -6,6 +6,7 @@ import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.*;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.RoleService;
 import com.bjgl.web.utils.StringUtil;
 import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,8 @@ import java.util.Map;
 public class RoleAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
 
+    private RoleService roleService;
+
 	private PermissionService permissionService;
 	private Role role;
 	
@@ -32,7 +35,7 @@ public class RoleAction extends BaseAction {
 	
 	public String handle(){
 		logger.info("进入查询角色");
-		roles = permissionService.listRoles(role);
+		roles = roleService.findByExample(role, null);
 		return "list";
 	}
 	
@@ -140,11 +143,13 @@ public class RoleAction extends BaseAction {
 			}
 			//如果admin修改，其他角色的role，会导致admin的权限错误,如果修改的是自己的权限就更新session，如果修改的为其他角色则不更新
 			UserSessionBean userSessionBean = (UserSessionBean)super.getSession().get(Global.USER_SESSION);
+            /*
 			if (userSessionBean != null && role.getId() != null && userSessionBean.getRole().getId().longValue() == role.getId().longValue()) {
 				userSessionBean.setRole(role);
 				userSessionBean.setPermissions(permList);
 				userSessionBean.setPermissionItems(permItemList);
 			}
+			*/
 		} else {
 			logger.error("添加角色错误，提交表单为空");
 			super.setErrorMessage("添加角色错误，提交表单不能为空");
@@ -167,7 +172,7 @@ public class RoleAction extends BaseAction {
 					role.setValid(true);//设置有效
 					role.setRestriction(true);//设置限制IP
 				} else {//修改
-					role = permissionService.getRole(role.getId());
+					role = roleService.findById(role.getId());
 				}
 			}
 		} else {
@@ -181,7 +186,7 @@ public class RoleAction extends BaseAction {
 	public String view() {
 		logger.info("进入查看角色详情");
 		if (role != null && role.getId() != null) {
-			role = permissionService.getRole(role.getId());
+			role = roleService.findById(role.getId());
 		} else {
 			logger.error("查看角色详情，编码为空");
 			super.setErrorMessage("查看角色详情，编码不能为空");
@@ -194,8 +199,7 @@ public class RoleAction extends BaseAction {
 	public String del() {
 		logger.info("进入删除角色");
 		if (role != null && role.getId() != null) {
-			role = permissionService.getRole(role.getId());
-			permissionService.del(role);
+			roleService.delete(role.getId());
 		} else {
 			logger.error("删除角色， 编码为空");
 			super.setErrorMessage("删除角色，编码不能为空");
@@ -392,4 +396,8 @@ public class RoleAction extends BaseAction {
 	public void setPermissionsItem(List<Long> permissionsItem) {
 		this.permissionsItem = permissionsItem;
 	}
+
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
 }

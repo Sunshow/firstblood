@@ -8,5 +8,7 @@
        default-autowire="byName">
 	
 	<context:property-placeholder location="classpath:bjgl.properties" />
+
+    <bean id="menuPermissionBean" class="com.bjgl.web.bean.MenuPermissionBean"/>
 	
 </beans>

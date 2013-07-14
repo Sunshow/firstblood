@@ -3,34 +3,37 @@ package com.bjgl.web.action.user;
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
-import com.bjgl.web.entity.user.*;
+import com.bjgl.web.entity.user.Role;
+import com.bjgl.web.entity.user.User;
+import com.bjgl.web.entity.user.UserRole;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.RoleService;
+import com.bjgl.web.service.user.UserRoleService;
 import com.bjgl.web.service.user.UserService;
 import com.bjgl.web.utils.CaptchaServiceSingleton;
 import com.bjgl.web.utils.CoreHttpUtils;
 import com.octo.captcha.service.CaptchaServiceException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class LoginAction extends BaseAction {
     private static final long serialVersionUID = -8830679912602886965L;
 
     private UserService userService;
+    private RoleService roleService;
+    private UserRoleService userRoleService;
 
     private PermissionService permissionService;
-
-    private User user;
 
     private String username;
     private String password;
     private String verifyCode;
 
     private Boolean enableVerifyCode;
-
-    private final static String INDEX = "index";
 
     @SuppressWarnings("unchecked")
     public String handle() {
@@ -61,141 +64,130 @@ public class LoginAction extends BaseAction {
                 this.errorForward(INDEX, "验证码错误");
             }
         }
+
         User user = userService.login(this.getUsername(), this.getPassword());
         if (user == null) {
             this.errorForward(INDEX, "用户名或密码错误");
         }
 
-        List<UserRole> userRoleList;
-        try {
-            userRoleList = permissionService.getRolesByUser(user);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            super.setErrorMessage(e.getMessage());
-            return "failure";
-        }
-        Long roleId = null;
-        if (userRoleList != null && userRoleList.size() > 0) {
-            roleId = userRoleList.get(0).getRoleId();
-        }
-        if (roleId != null && roleId.longValue() != 0) {
-            Role role;
-            try {
-                role = permissionService.getRole(roleId);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                super.setErrorMessage(e.getMessage());
-                return "failure";
-            }
-            if (role.isRestriction()) {//限定ip时，进行有效ip段验证
-                String remoteIp = getRemoteIp(ServletActionContext.getRequest());
-                if (!matchingIp(role.getRestrictionIp(), remoteIp)) {
-                    logger.error("IP地址无效");
-                    super.setErrorMessage("您的IP地址无效");
-                    return "index";
-                }
-            }
+        List<UserRole> userRoleList = userRoleService.findByUserId(user.getId());
 
-            if (user.getLoginTime() != null) {
-                user.setLastLoginTime(user.getLoginTime());
-            }
-            user.setLoginTime(new Date());
-            try {
-                permissionService.manage(user);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                super.setErrorMessage(e.getMessage());
-                return "failure";
-            }
+        List<Role> roleList = new ArrayList<Role>();
 
-            //创建userSessionBean
-            UserSessionBean userSessionBean = new UserSessionBean();
-            //setUser
-            userSessionBean.setUser(user);
-            //serRole
-            userSessionBean.setRole(role);
-            List<Permission> permList = new ArrayList<Permission>();
-            List<Menu> menuList = new ArrayList<Menu>();
-            List<RolePermission> rolePermList = new ArrayList<RolePermission>();
-
-
-            // 一次性读出所有菜单
-            List<Menu> allMenuList = permissionService.listMenus(null);
-            Map<Long, Menu> allMenuMap = new HashMap<Long, Menu>();
-            // 转置map
-            if (allMenuList != null) {
-                for (Menu menu : allMenuList) {
-                    allMenuMap.put(menu.getId(), menu);
-                }
-            }
-
-            // 一次性读出所有权限
-            List<Permission> allPermissionList = permissionService.listPermissions(null);
-            Map<Long, Permission> allPermissionMap = new HashMap<Long, Permission>();
-            // 转置map
-            if (allPermissionList != null) {
-                for (Permission permission : allPermissionList) {
-                    allPermissionMap.put(permission.getId(), permission);
-                }
-            }
-
-
-            rolePermList = permissionService.getPermissionsByRole(role);
-            if (rolePermList == null || rolePermList.size() == 0) {
-                logger.error("您所拥有的角色没有任何权限");
-                super.setErrorMessage("您所拥有的角色没有任何权限，请联系管理员");
-                return "index";
-            }
-            Set<Long> tmpMenuId = new HashSet<Long>();
-            for (RolePermission rp : rolePermList) {
-                //添加主权限
-                Permission tmpPermission = allPermissionMap.get(rp.getPermissionId());
-                if (tmpPermission == null) {
-                    // 权限已经被删除
+        // 根据所属角色验证登录IP
+        if (userRoleList != null) {
+            for (UserRole userRole : userRoleList) {
+                Role role = roleService.findById(userRole.getId());
+                if (role == null) {
+                    // 容错
                     continue;
                 }
-                String permissionItemIds = rp.getPermissionItemIds();
-                if (permissionItemIds != null && !"".equals(permissionItemIds)) {
-                    List<String> list2 = new ArrayList<String>();
-                    String[] permItemNode = StringUtils.split(permissionItemIds, ',');
-                    for (String permItemStr : permItemNode) {
-                        list2.add(permItemStr);
+                roleList.add(role);
+                if (role.isRestriction()) {//限定ip时，进行有效ip段验证
+                    String remoteIp = getRemoteIp(ServletActionContext.getRequest());
+                    if (!matchingIp(role.getRestrictionIp(), remoteIp)) {
+                        this.errorForward(INDEX, "您的IP地址已被禁止登录");
                     }
-                    tmpPermission.setPermissionItemStr(list2);
                 }
-                permList.add(tmpPermission);
-                tmpMenuId.add(tmpPermission.getMenuID());
             }
-            //添加菜单
-            for (Long menuId : tmpMenuId) {
-                Menu menu = allMenuMap.get(menuId);
-                menuList.add(menu);
-            }
-
-            //按orderView排序 数值大的在前面
-            Collections.sort(menuList, new Comparator<Menu>() {
-                public int compare(Menu arg0, Menu arg1) {
-                    return arg1.getOrderView().compareTo(arg0.getOrderView());
-                }
-            });
-
-            //按orderView排序 数值大的在前面
-            Collections.sort(permList, new Comparator<Permission>() {
-                public int compare(Permission arg0, Permission arg1) {
-                    return arg1.getOrderView().compareTo(arg0.getOrderView());
-                }
-            });
-
-            userSessionBean.setPermissions(permList);
-            userSessionBean.setMenus(menuList);
-            super.getSession().put(Global.USER_SESSION, userSessionBean);
-            super.setForwardUrl("/main.do");
-            logger.info("验证登录结束");
-            return "forward";
-        } else {
-            super.setErrorMessage("没有分配角色，请联系管理员");
-            return "failure";
         }
+
+        // 登录成功，更新最后登录时间
+        user.setLastLoginTime(user.getLoginTime());
+        user.setLoginTime(new Date());
+        this.userService.update(user);
+
+        //创建userSessionBean
+        UserSessionBean userSessionBean = new UserSessionBean();
+        userSessionBean.setUser(user);
+        userSessionBean.setRoleList(roleList);
+
+        super.getSession().put(Global.USER_SESSION, userSessionBean);
+        super.setForwardUrl("/main.do");
+        logger.info("验证登录结束");
+        return FORWARD;
+
+        /*
+
+        List<Permission> permList = new ArrayList<Permission>();
+        List<Menu> menuList = new ArrayList<Menu>();
+        List<RolePermission> rolePermList = new ArrayList<RolePermission>();
+
+
+        // 一次性读出所有菜单
+        List<Menu> allMenuList = permissionService.listMenus(null);
+        Map<Long, Menu> allMenuMap = new HashMap<Long, Menu>();
+        // 转置map
+        if (allMenuList != null) {
+            for (Menu menu : allMenuList) {
+                allMenuMap.put(menu.getId(), menu);
+            }
+        }
+
+        // 一次性读出所有权限
+        List<Permission> allPermissionList = permissionService.listPermissions(null);
+        Map<Long, Permission> allPermissionMap = new HashMap<Long, Permission>();
+        // 转置map
+        if (allPermissionList != null) {
+            for (Permission permission : allPermissionList) {
+                allPermissionMap.put(permission.getId(), permission);
+            }
+        }
+
+
+        rolePermList = permissionService.getPermissionsByRole(role);
+        if (rolePermList == null || rolePermList.size() == 0) {
+            logger.error("您所拥有的角色没有任何权限");
+            super.setErrorMessage("您所拥有的角色没有任何权限，请联系管理员");
+            return "index";
+        }
+        Set<Long> tmpMenuId = new HashSet<Long>();
+        for (RolePermission rp : rolePermList) {
+            //添加主权限
+            Permission tmpPermission = allPermissionMap.get(rp.getPermissionId());
+            if (tmpPermission == null) {
+                // 权限已经被删除
+                continue;
+            }
+            String permissionItemIds = rp.getPermissionItemIds();
+            if (permissionItemIds != null && !"".equals(permissionItemIds)) {
+                List<String> list2 = new ArrayList<String>();
+                String[] permItemNode = StringUtils.split(permissionItemIds, ',');
+                for (String permItemStr : permItemNode) {
+                    list2.add(permItemStr);
+                }
+                tmpPermission.setPermissionItemStr(list2);
+            }
+            permList.add(tmpPermission);
+            tmpMenuId.add(tmpPermission.getMenuID());
+        }
+        //添加菜单
+        for (Long menuId : tmpMenuId) {
+            Menu menu = allMenuMap.get(menuId);
+            menuList.add(menu);
+        }
+
+        //按orderView排序 数值大的在前面
+        Collections.sort(menuList, new Comparator<Menu>() {
+            public int compare(Menu arg0, Menu arg1) {
+                return arg1.getOrderView().compareTo(arg0.getOrderView());
+            }
+        });
+
+        //按orderView排序 数值大的在前面
+        Collections.sort(permList, new Comparator<Permission>() {
+            public int compare(Permission arg0, Permission arg1) {
+                return arg1.getOrderView().compareTo(arg0.getOrderView());
+            }
+        });
+
+        userSessionBean.setPermissions(permList);
+        userSessionBean.setMenus(menuList);
+        super.getSession().put(Global.USER_SESSION, userSessionBean);
+        super.setForwardUrl("/main.do");
+        logger.info("验证登录结束");
+        return "forward";
+        */
     }
 
     //ip段匹配
@@ -236,14 +228,6 @@ public class LoginAction extends BaseAction {
             return clientIPArray[0];
         }
         return null;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getUsername() {
@@ -291,5 +275,13 @@ public class LoginAction extends BaseAction {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
+
+    public void setUserRoleService(UserRoleService userRoleService) {
+        this.userRoleService = userRoleService;
     }
 }

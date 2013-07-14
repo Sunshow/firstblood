@@ -24,15 +24,17 @@ public class MainAction extends BaseAction {
 			return "index";
 		}
 		menus = new ArrayList<MenuBean>();
-		for (Menu menu : userSessionBean.getMenus()) {
-			MenuBean menuBean = new MenuBean();
-			menuBean.setMenu(menu);
-			List<Permission> permissions = getSelfPermissionItems(menu,userSessionBean.getPermissions());
-			menuBean.setPermissions(permissions);
-			menus.add(menuBean);
-		}
+        if (userSessionBean.getMenus() != null) {
+            for (Menu menu : userSessionBean.getMenus()) {
+                MenuBean menuBean = new MenuBean();
+                menuBean.setMenu(menu);
+                List<Permission> permissions = getSelfPermissionItems(menu,userSessionBean.getPermissions());
+                menuBean.setPermissions(permissions);
+                menus.add(menuBean);
+            }
+        }
 		
-		return "login";
+		return "main";
 	}
 	
 	public List<Permission> getSelfPermissionItems(Menu menu, List<Permission> permissions) {
