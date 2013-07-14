@@ -24,7 +24,7 @@
 		    			<td class="alignright_30">编码：</td><td class="alignleft">${user.id}</td>
 		    		</tr>
 	    			<tr>
-		    			<td class="alignright_30">用户名：</td><td class="alignleft">${user.userName}</td>
+		    			<td class="alignright_30">用户名：</td><td class="alignleft">${user.username}</td>
 		    		</tr>
 		    		<tr>
 		    			<td class="alignright_30">密码：</td><td class="alignleft">${user.password}</td>

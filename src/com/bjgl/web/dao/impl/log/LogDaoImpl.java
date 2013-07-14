@@ -91,7 +91,7 @@ public class LogDaoImpl extends HibernateDaoSupport implements LogDao {
 							query.setParameter("ip", "%" + ip + "%");
 						}
 			
-						if(pageBean.isPageFlag()){
+						if(pageBean.isPagging()){
 							if(pageBean.getPageSize() != 0){
 								query.setFirstResult((pageBean.getPage() - 1) * pageBean.getPageSize());
 								query.setMaxResults(pageBean.getPageSize());
@@ -175,7 +175,7 @@ public class LogDaoImpl extends HibernateDaoSupport implements LogDao {
 						if(ip != null && !"".equals(ip)){
 							query.setParameter("ip", "%" + ip + "%");
 						}
-						if(pageBean.isPageFlag()){
+						if(pageBean.isPagging()){
 							int totalCount = ((Long)query.iterate().next()).intValue();
 							pageBean.setCount(totalCount);
 							int pageCount = 0;//页数

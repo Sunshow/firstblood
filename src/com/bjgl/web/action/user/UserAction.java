@@ -157,14 +157,14 @@ public class UserAction extends BaseAction {
 					return "failure";
 				}
 			} else {//添加
-				if (user.getUserName() == null || "".equals(user.getUserName())) {
+				if (user.getUsername() == null || "".equals(user.getUsername())) {
 					logger.error("用户名为空");
 					super.setErrorMessage("用户名不能为空");
 					return "failure";
 				} else {
 					User sUser = null;
 					try {
-						sUser = permissionService.getByUserName(user.getUserName());
+						sUser = permissionService.getByUserName(user.getUsername());
 					} catch (Exception e) {
 						logger.error(e.getMessage());
 						super.setErrorMessage(e.getMessage());
@@ -250,7 +250,7 @@ public class UserAction extends BaseAction {
 			return "failure";
 		}
 		if (user != null && user.getId() != null) {
-			if (user.isValid()) {
+			if (user.getValid()) {
 				checkValid = "on";
 			}
 		}
@@ -290,7 +290,7 @@ public class UserAction extends BaseAction {
 		logger.info("进入检验用户名是否存在");
 		HttpServletResponse response = ServletActionContext.getResponse();
 		boolean flag = true;
-		User sUser = permissionService.getByUserName(user.getUserName());
+		User sUser = permissionService.getByUserName(user.getUsername());
 		if (sUser != null && sUser.getId() != null) {
 			flag = false;
 		}

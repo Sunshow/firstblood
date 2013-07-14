@@ -66,7 +66,7 @@
 
 <div class="container">
 
-    <form class="form-signin" action="/login.do">
+    <form class="form-signin" action="/login.do" method="post">
         <c:if test="${errorMessage != null && errorMessage != ''}">
             <div class="alert alert-error">
                 ${errorMessage}

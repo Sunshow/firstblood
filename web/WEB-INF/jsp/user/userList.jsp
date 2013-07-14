@@ -53,7 +53,7 @@
 			});
 			$("#theform").validate({
 				rules:{
-					"userName":{
+					"username":{
 							maxlength:64,
 							minlength:1,
 							rangelength:[1,64]
@@ -83,7 +83,7 @@
 	  					<input type="hidden" value="query" name="action"/>
 				    	<table cellpadding="0" cellspacing="0" border="0" style="width:50%" class="querytab">
 				    		<tr>
-				    			<td>用户名:<input type="text" name="userName" maxlength="16" value="${userName}" /></td>
+				    			<td>用户名:<input type="text" name="username" maxlength="16" value="${username}" /></td>
 				    			<td>姓名:<input type="text" name="name" maxlength="16" value="${name}" /></td>
 				    		</tr>
 				    		<tr>
@@ -145,7 +145,7 @@
 						<tr class="beover">
 			    			<td>${index.count}</td>
 			    			<td>${id}</td>
-			    			<td><a href="${ctx}/user/user.do?action=view&user.id=${id}">${userName}</a></td>
+			    			<td><a href="${ctx}/user/user.do?action=view&user.id=${id}">${username}</a></td>
 			    			<td>${name}</td>
 			    			<td>${tel}</td>
 			    			<td>${email}</td>

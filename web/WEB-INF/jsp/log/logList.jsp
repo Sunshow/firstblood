@@ -59,7 +59,7 @@
 			});
 			$("#theform").validate({
 				rules:{
-					"userName":{
+					"username":{
 							maxlength:64,
 							minlength:1,
 							rangelength:[1,64]
@@ -88,7 +88,7 @@
 	  					<input type="hidden" name="action" value="query"/>
 				    	<table cellpadding="0" cellspacing="0" border="0" style="width:96%" class="querytab">
 				    		<tr>
-				    			<td class="alignleft">用户名:<input type="text" name="userName" maxlength="16" value="${userName}" /></td>
+				    			<td class="alignleft">用户名:<input type="text" name="username" maxlength="16" value="${username}" /></td>
 				    			<td class="alignleft">姓名:<input type="text" name="name" maxlength="16" value="${name}" /></td>
 				    			<td class="alignleft">日志类型:
 					    			<s:select name="logTypeId" list="logTypes" listKey="value" 
@@ -131,7 +131,7 @@
 						<tr class="beover">
 			    			<td>${index.count}</td>
 			    			<td>${id}</td>
-			    			<td>${userName}</td>
+			    			<td>${username}</td>
 			    			<td>${name}</td>
 			    			<td>${logType.name}</td>
 			    			<td><s:date name="createTime" format="yyyy-MM-dd HH:mm:ss" /></td>

@@ -24,7 +24,7 @@
 		    			<td class="alignright_30">编码：</td><td class="alignleft">${log.id}</td>
 		    		</tr>
 	    			<tr>
-		    			<td class="alignright_30">用户名：</td><td class="alignleft">${log.userName}</td>
+		    			<td class="alignright_30">用户名：</td><td class="alignleft">${log.username}</td>
 		    		</tr>
 		    		<tr>
 		    			<td class="alignright_30">姓名：</td><td class="alignleft">${log.name}</td>

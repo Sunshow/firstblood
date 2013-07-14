@@ -12,7 +12,7 @@ public class Log implements Serializable {
 	 */
 	private static final long serialVersionUID = 8626979639548943506L;
 	private Long id;
-	private String userName;//用户登录名
+	private String username;//用户登录名
 	private String name;//用户姓名
 	private LogType logType;//1,操作日志，2异常日志
 	private Date createTime;
@@ -28,11 +28,11 @@ public class Log implements Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	public String getName() {
 		return name;

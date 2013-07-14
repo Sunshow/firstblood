@@ -59,7 +59,7 @@ public class LogInterceptor extends AbstractInterceptor {
 			UserSessionBean userSessionBean = (UserSessionBean) ac.getSession().get(Global.USER_SESSION);
 			Log log = new Log();
 			if(userSessionBean != null) {
-				log.setUserName(userSessionBean.getUser().getUserName());
+				log.setUsername(userSessionBean.getUser().getUsername());
 				log.setName(userSessionBean.getUser().getName());
 			}
 			String message = StringUtil.getStringByActionHashMap(paramMap);

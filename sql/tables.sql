@@ -1,6 +1,6 @@
 CREATE TABLE `bjgl_log` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(16) DEFAULT NULL,
+  `username` varchar(16) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `log_type` int(11) NOT NULL,
   `create_time` datetime NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `bjgl_log` (
 
 CREATE TABLE `bjgl_user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(16) NOT NULL,
+  `username` varchar(16) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(16) NOT NULL,
   `create_time` datetime NOT NULL,
@@ -27,8 +27,7 @@ CREATE TABLE `bjgl_user` (
   `tel` varchar(16) DEFAULT NULL,
   `email` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_name` (`user_name`),
-  UNIQUE KEY `idx_username` (`user_name`),
+  UNIQUE KEY `uk_username` (`username`),
   KEY `idx_role` (`role_id`),
   KEY `idx_valild` (`valid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

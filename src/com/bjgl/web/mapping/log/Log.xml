@@ -8,7 +8,7 @@
         <id name="id">
             <generator class="native"></generator>
         </id>
-        <property name="userName" column="user_name"/>
+        <property name="username" column="username"/>
         <property name="name"/>
         <property name="logType">
             <column name="log_type" precision="22" scale="0" not-null="true"/>

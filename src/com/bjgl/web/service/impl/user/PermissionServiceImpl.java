@@ -214,43 +214,37 @@ public class PermissionServiceImpl implements PermissionService {
 	}
 
 	public void manage(User user){
-		userDao.merge(user);
+		userDao.update(user);
 	}
 
-	public List<User> list(String userName, String name, Long roleID,PageBean pageBean){
-		return userDao.list(userName, userName, null, null, roleID, null, pageBean);
-	}
-
-	public PageBean getPageBean(String userName, String name, Long roleID,PageBean pageBean){
-		return userDao.getPageBean(userName, userName, null, null, roleID, null, pageBean);
-	}
-	
 	@Override
 	public List<User> list(String userName, String name, Date beginDate,
 			Date endDate, Long roleID, String valid, PageBean pageBean) {
-		return userDao.list(userName, name, beginDate, endDate, roleID, valid, pageBean);
+		//return userDao.list(userName, name, beginDate, endDate, roleID, valid, pageBean);
+        return null;
 	}
 	
 	@Override
 	public PageBean getPageBean(String userName, String name, Date beginDate,
 			Date endDate, Long roleID, String valid, PageBean pageBean) {
-		return userDao.getPageBean(userName, name, beginDate, endDate, roleID, valid, pageBean);
+		//return userDao.getPageBean(userName, name, beginDate, endDate, roleID, valid, pageBean);
+        return null;
 	}
 
 	public User getUser(Long ID){
-		return userDao.get(ID);
+		return userDao.findById(ID);
 	}
 
 	public void delUser(User user){
-		userDao.del(user);
+		userDao.delete(user.getId());
 	}
 
 	public User getByUserName(String userName){
-		return userDao.getByUserName(userName);
+		return userDao.getByUsername(userName);
 	}
 	
 	public User login(String userName, String password){
-		User user = userDao.getByUserName(userName);
+		User user = userDao.getByUsername(userName);
 		if(user != null && user.getId() != null){
 			if(CoreStringUtils.md5(password, CharsetConstant.CHARSET_UTF8).equals(user.getPassword())){
 				return user;
@@ -259,24 +253,12 @@ public class PermissionServiceImpl implements PermissionService {
 		return null;
 	}
 	
-	@Override
-	public Map<Long, User> userMapping() {
-		PageBean pageBean = new PageBean();
-		pageBean.setPageFlag(false);
-		List<User> userList = userDao.list(null, null, null, null, null, null, pageBean);
-		Map<Long, User> userMap = new HashMap<Long, User>();
-		if (userList != null) {
-			for (User user : userList) {
-				userMap.put(user.getId(), user);
-			}
-		}
-		return userMap;
-	}
-	
 	public void manage(User user, UserRole userRole){
+        /*
 		User saveUser = userDao.mergePK(user);
 		userRole.setUserId(saveUser.getId());
 		userRoleDao.merge(userRole);
+		*/
 	}
 
 

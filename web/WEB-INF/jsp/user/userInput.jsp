@@ -51,7 +51,7 @@
 			});
 			$("#theform").validate({
 				rules:{
-					"user.userName":{
+					"user.username":{
 						required:true,
 						maxlength:64,
 						minlength:4,
@@ -78,7 +78,7 @@
 						}
 				},
 				messages:{
-					"user.userName":{
+					"user.username":{
 						remote: "该用户名已被使用"
 					},
 					"conPassword":{
@@ -112,10 +112,10 @@
 	    			<tr>
 	    			<c:choose>
 		    			<c:when test="${user.id == null}">
-		    			<td class="alignright"><span class="red spanmargin">*</span><span>用户名：</span></td><td class="alignleft"><input type="text" name="user.userName" maxlength="16" value="${user.userName}" /></td>
+		    			<td class="alignright"><span class="red spanmargin">*</span><span>用户名：</span></td><td class="alignleft"><input type="text" name="user.username" maxlength="16" value="${user.username}" /></td>
 		    			</c:when>
 		    			<c:otherwise>
-		    			<td class="alignright">用户名：</td><td class="alignleft">${user.userName}<input type="hidden" name="user.userName" value="${user.userName}" class="ignore" /></td>
+		    			<td class="alignright">用户名：</td><td class="alignleft">${user.username}<input type="hidden" name="user.username" value="${user.username}" class="ignore" /></td>
 		    			</c:otherwise>
 		    		</c:choose>
 		    		</tr>

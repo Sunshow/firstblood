@@ -51,13 +51,10 @@ public interface PermissionService {
 	
 	
 	void manage(User user);
-	List<User> list(String userName, String name, Long roleID,PageBean pageBean);
-	PageBean getPageBean(String userName, String name, Long roleID, PageBean pageBean); 
 	User getUser(Long ID);
 	void delUser(User user);
 	User getByUserName(String userName);
 	User login(String userName, String password);
-	Map<Long, User> userMapping();
 	/**
 	 * 封装多条件查询分页信息
 	 * @param userName	用户名
