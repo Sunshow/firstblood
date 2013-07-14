@@ -9,12 +9,6 @@ import java.util.List;
 
 public interface PermissionService extends BaseService<Permission> {
 
-	void manage(PermissionItem permissionItem);
-	List<PermissionItem> listPermissionItems(PermissionItem permissionItem); 
-	PermissionItem getPermissionItem(Long ID);
-	void del(PermissionItem permissionItem);
-	List<PermissionItem> listPermissionItems(Permission permission);
-	
     public void manage(Role role, List<RolePermission> rolePermissions);
 	
 	void manage(User user);

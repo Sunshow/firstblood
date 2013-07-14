@@ -91,7 +91,7 @@ public class HandleLogInterceptor extends AbstractInterceptor {
 	public List<PermissionItem> getSelfPermissionItems(Permission permission, List<PermissionItem> permissionItems){
 		List<PermissionItem> list = new ArrayList<PermissionItem>();
 		for(PermissionItem permissionItem : permissionItems){
-			if(permissionItem != null && permissionItem.getPermissionID().longValue() ==  permission.getId().longValue()){
+			if(permissionItem != null && permissionItem.getPermissionId().longValue() ==  permission.getId().longValue()){
 				list.add(permissionItem);
 			}
 		}

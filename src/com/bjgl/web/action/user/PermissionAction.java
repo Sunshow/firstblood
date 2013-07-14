@@ -21,8 +21,8 @@ public class PermissionAction extends BaseAction {
 	
 	public String handle(){
 		logger.info("进入查询权限列表");
-		if (permission != null && permission.getMenuID() != null) {
-			menu = menuService.findById(permission.getMenuID());
+		if (permission != null && permission.getMenuId() != null) {
+			menu = menuService.findById(permission.getMenuId());
 		}
 		permissions = permissionService.findByExample(permission, null);
 		return "list";
@@ -47,7 +47,7 @@ public class PermissionAction extends BaseAction {
 			super.setErrorMessage("更新权限错误，提交的表单不能为空");
 			return "failure";
 		}
-		super.setForwardUrl("/user/permission.do?permission.menuID="+permission.getMenuID());
+		super.setForwardUrl("/user/permission.do?permission.menuID="+permission.getMenuId());
 		logger.info("更新权限结束");
 		return "success";
 	}

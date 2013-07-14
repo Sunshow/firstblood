@@ -26,7 +26,7 @@
   <body> 	
     <div>
 		<div class="titlediv">您所在的位置：系统管理->菜单管理->子权限列表</div>
-		<div class="add_div_margin"><a href="${ctx}/user/permissionItem.do?action=input&permissionItem.permissionID=${permissionItem.permissionID}" class="easyui-linkbutton" iconCls="icon-add">添加子权限</a></div>
+		<div class="add_div_margin"><a href="${ctx}/user/permissionItem.do?action=input&permissionItem.permissionId=${permissionItem.permissionId}" class="easyui-linkbutton" iconCls="icon-add">添加子权限</a></div>
 		<div>
 			<div>
 				<div class="pagediv">${permission.name}->子权限列表</div>
@@ -58,7 +58,7 @@
 		    	</div>
 		    	<div class="pagediv">&nbsp;</div>
 			</div>
-			<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuID=${permission.menuID}" class="easyui-linkbutton" iconCls="icon-reload">返回权限列表</a></center></div>
+			<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuId=${permission.menuId}" class="easyui-linkbutton" iconCls="icon-reload">返回权限列表</a></center></div>
 		</div>
 	</div>
   </body>

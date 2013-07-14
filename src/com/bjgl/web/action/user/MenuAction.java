@@ -1,26 +1,24 @@
 package com.bjgl.web.action.user;
 
-import java.util.List;
-
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.entity.user.Menu;
 import com.bjgl.web.service.user.MenuService;
-import com.bjgl.web.service.user.PermissionService;
+
+import java.util.List;
 
 public class MenuAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
 
     private MenuService menuService;
 
-	private PermissionService permissionService;
 	private Menu menu;
 	
-	private List<Menu> menus;
+	private List<Menu> menuList;
 	
 	public String handle(){
 		logger.info("进入查询菜单列表");
-		menus = menuService.findByExample(menu, null);
-		return "list";
+        menuList = menuService.findByExample(menu, null);
+		return LIST;
 	}
 	
 	public String manage() {
@@ -82,14 +80,6 @@ public class MenuAction extends BaseAction {
 		logger.info("删除菜单结束");
 		return "forward";
 	}
-	
-	public PermissionService getPermissionService() {
-		return permissionService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
 
 	public Menu getMenu() {
 		return menu;
@@ -99,13 +89,13 @@ public class MenuAction extends BaseAction {
 		this.menu = menu;
 	}
 
-	public List<Menu> getMenus() {
-		return menus;
-	}
+    public List<Menu> getMenuList() {
+        return menuList;
+    }
 
-	public void setMenus(List<Menu> menus) {
-		this.menus = menus;
-	}
+    public void setMenuList(List<Menu> menuList) {
+        this.menuList = menuList;
+    }
 
     public void setMenuService(MenuService menuService) {
         this.menuService = menuService;

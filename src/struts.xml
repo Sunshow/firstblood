@@ -17,14 +17,14 @@
             <interceptor-stack name="userSessionStack">
                 <interceptor-ref name="completeStack"/>
                 <interceptor-ref name="logInterceptor"/>
-                <interceptor-ref name="userSessionInterceptor"/>
                 <interceptor-ref name="userPermissionInterceptor"/>
+                <interceptor-ref name="userSessionInterceptor"/>
             </interceptor-stack>
             <interceptor-stack name="handleUserSessionStack">
                 <interceptor-ref name="completeStack"/>
                 <interceptor-ref name="handleLogInterceptor"/>
-                <interceptor-ref name="userSessionInterceptor"/>
                 <interceptor-ref name="userPermissionInterceptor"/>
+                <interceptor-ref name="userSessionInterceptor"/>
             </interceptor-stack>
         </interceptors>
         <global-results>

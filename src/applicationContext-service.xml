@@ -42,6 +42,7 @@
     <bean id="menuService" class="com.bjgl.web.service.impl.user.MenuServiceImpl" p:dao-ref="menuDao"/>
     <bean id="rolePermissionService" class="com.bjgl.web.service.impl.user.RolePermissionServiceImpl" p:dao-ref="rolePermissionDao"/>
     <bean id="permissionService" class="com.bjgl.web.service.impl.user.PermissionServiceImpl" p:dao-ref="permissionDao"/>
+    <bean id="permissionItemService" class="com.bjgl.web.service.impl.user.PermissionItemServiceImpl" p:dao-ref="permissionItemDao"/>
     <bean id="logService" class="com.bjgl.web.service.impl.log.LogServiceImpl"/>
 
 </beans>

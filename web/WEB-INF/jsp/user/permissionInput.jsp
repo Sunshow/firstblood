@@ -68,7 +68,7 @@
     	<form id="theform" action="${ctx}/user/permission.do" method="post">
     		<input type="hidden" name="action" value="manage"/>
     		<input type="hidden" name="permission.id" value="${permission.id}"/>
-    		<input type="hidden" name="permission.menuID" value="${permission.menuID}"/>
+    		<input type="hidden" name="permission.menuId" value="${permission.menuId}"/>
     		<div id="form">
 	    		<table cellpadding="0" cellspacing="0" border="0" style="width:50%" class="querytab">
 		    		<tr><td class="alignright"><span class="red spanmargin">*</span><span>权限名称：</span></td><td class="alignleft"><input type="text" name="permission.name" maxlength="16" value="${permission.name}" /></td></tr>
@@ -115,7 +115,7 @@
 	    		</table>
     		</div>
     		<div id="foot"><center><input id="sub" type="submit" value="提交 "/></center></div>
-    		<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuID=${permission.menuID}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
+    		<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuId=${permission.menuId}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
     	</form>
     	</div>
     </div>

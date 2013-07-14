@@ -10,7 +10,7 @@
         </id>
         <property name="name" not-null="true"/>
         <property name="url"/>
-        <property name="menuID" column="menu_id" not-null="true"/>
+        <property name="menuId" column="menu_id" not-null="true"/>
         <property name="orderView" column="order_view"/>
         <property name="actionName" column="action_name" not-null="true"/>
         <property name="paramName" column="param_name"/>

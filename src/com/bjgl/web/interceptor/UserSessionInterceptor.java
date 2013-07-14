@@ -42,17 +42,17 @@ public class UserSessionInterceptor extends AbstractInterceptor {
         Set<Long> menuIdSet = new HashSet<Long>();
         if (permissionList != null) {
             for (Permission permission : permissionList) {
-                menuIdSet.add(permission.getMenuID());
+                menuIdSet.add(permission.getMenuId());
 
                 if (permission.getMenuItem() == null || !permission.getMenuItem()) {
                     continue;
                 }
 
-                if (!menuPermissionListMap.containsKey(permission.getMenuID())) {
-                    menuPermissionListMap.put(permission.getMenuID(), new ArrayList<Permission>());
+                if (!menuPermissionListMap.containsKey(permission.getMenuId())) {
+                    menuPermissionListMap.put(permission.getMenuId(), new ArrayList<Permission>());
                 }
 
-                menuPermissionListMap.get(permission.getMenuID()).add(permission);
+                menuPermissionListMap.get(permission.getMenuId()).add(permission);
             }
         }
 

@@ -5,12 +5,14 @@ import java.util.List;
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.entity.user.Permission;
 import com.bjgl.web.entity.user.PermissionItem;
+import com.bjgl.web.service.user.PermissionItemService;
 import com.bjgl.web.service.user.PermissionService;
 
 public class PermissionItemAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
 
 	private PermissionService permissionService;
+    private PermissionItemService permissionItemService;
 	
 	private PermissionItem permissionItem;
 	private Permission permission;
@@ -19,10 +21,10 @@ public class PermissionItemAction extends BaseAction {
 	
 	public String handle() {
 		logger.info("进入查询子权限列表");
-		if (permissionItem != null && permissionItem.getPermissionID() != null) {
-			permission = permissionService.findById(permissionItem.getPermissionID());
+		if (permissionItem != null && permissionItem.getPermissionId() != null) {
+			permission = permissionService.findById(permissionItem.getPermissionId());
 		}
-		permissionItems = permissionService.listPermissionItems(permissionItem);
+		permissionItems = permissionItemService.findByExample(permissionItem, null);
 		return "list";
 	}
 	
@@ -39,13 +41,13 @@ public class PermissionItemAction extends BaseAction {
 				super.setErrorMessage("权限action名称不能为空");
 				return "failure";
 			}
-			permissionService.manage(permissionItem);
+            permissionItemService.update(permissionItem);
 		} else {
 			logger.error("添加权限错误，提交表单不能为空");
 			super.setErrorMessage("添加权限错误，提交表单不能为空");
 			return "failure";
 		}
-		super.setForwardUrl("/user/permissionItem.do?permissionItem.permissionID="+permissionItem.getPermissionID());
+		super.setForwardUrl("/user/permissionItem.do?permissionItem.permissionID="+permissionItem.getPermissionId());
 		logger.info("更新子权限结束");
 		return "success";
 	}
@@ -54,7 +56,7 @@ public class PermissionItemAction extends BaseAction {
 		logger.info("进入输入子权限信息");
 		if (permissionItem != null) {
 			if (permissionItem.getId() != null) {
-				permissionItem = permissionService.getPermissionItem(permissionItem.getId());
+				permissionItem = permissionItemService.findById(permissionItem.getId());
 			} else {
 				permissionItem.setValid(true);
 				permissionItem.setOrderView(0);
@@ -66,7 +68,7 @@ public class PermissionItemAction extends BaseAction {
 	public String view() {
 		logger.info("进入查看子权限详情");
 		if (permissionItem != null && permissionItem.getId() != null) {
-			permissionItem = permissionService.getPermissionItem(permissionItem.getId());
+			permissionItem = permissionItemService.findById(permissionItem.getId());
 		} else {
 			logger.error("查看子权限详情，编码为空");
 			super.setErrorMessage("查看子权限详情，编码不能为空");
@@ -79,8 +81,7 @@ public class PermissionItemAction extends BaseAction {
 	public String del() {
 		logger.info("进入删除子权限");
 		if (permissionItem != null && permissionItem.getId() != null) {
-			permissionItem = permissionService.getPermissionItem(permissionItem.getId());
-			permissionService.del(permissionItem);
+            permissionItemService.delete(permissionItem.getId());
 		} else {
 			logger.error("删除子权限，编码为空");
 			super.setErrorMessage("删除子权限，编码不能为空");
@@ -122,4 +123,8 @@ public class PermissionItemAction extends BaseAction {
 	public void setPermission(Permission permission) {
 		this.permission = permission;
 	}
+
+    public void setPermissionItemService(PermissionItemService permissionItemService) {
+        this.permissionItemService = permissionItemService;
+    }
 }

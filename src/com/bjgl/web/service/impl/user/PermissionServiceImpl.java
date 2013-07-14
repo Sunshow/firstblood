@@ -16,27 +16,6 @@ public class PermissionServiceImpl extends AbstractBaseServiceImpl<Permission> i
 	private RolePermissionDao rolePermissionDao;
 	private PermissionItemDao permissionItemDao;
 
-	public void manage(PermissionItem permissionItem){
-		permissionItemDao.merge(permissionItem);
-	}
-
-	public List<PermissionItem> listPermissionItems(
-			PermissionItem permissionItem){
-		return permissionItemDao.list(permissionItem);
-	}
-
-	public PermissionItem getPermissionItem(Long ID){
-		return permissionItemDao.get(ID);
-	}
-
-	public void del(PermissionItem permissionItem){
-		permissionItemDao.del(permissionItem);
-	}
-
-	public List<PermissionItem> listPermissionItems(Permission permission) {
-		return permissionItemDao.list(permission);
-	}
-
 	public void manage(Role role, List<RolePermission> rolePermissions) {
 
         // 先保存角色

@@ -52,7 +52,7 @@
 		    		</tr>
 	    		</table>
     		</div>
-    		<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuID=${permission.menuID}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
+    		<div class="margin_10"><center><a href="${ctx}/user/permission.do?permission.menuId=${permission.menuId}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
     	</div>
     </div>
   </body>

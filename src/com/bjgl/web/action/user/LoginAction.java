@@ -11,6 +11,7 @@ import com.bjgl.web.service.user.*;
 import com.bjgl.web.utils.CaptchaServiceSingleton;
 import com.bjgl.web.utils.CoreHttpUtils;
 import com.octo.captcha.service.CaptchaServiceException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,10 +92,24 @@ public class LoginAction extends BaseAction {
 
         // 汇总用户权限
         Set<Long> permissionIdSet = new HashSet<Long>();
+        Map<Long, Set<Long>> permissionItemIdSetMap = new HashMap<Long, Set<Long>>();
         for (Role role : roleList) {
             List<RolePermission> rolePermissionList = rolePermissionService.findByRoleId(role.getId());
             for (RolePermission rolePermission : rolePermissionList) {
                 permissionIdSet.add(rolePermission.getPermissionId());
+
+                if (StringUtils.isNotBlank(rolePermission.getPermissionItemIds())) {
+                    if (!permissionItemIdSetMap.containsKey(rolePermission.getPermissionId())) {
+                        permissionItemIdSetMap.put(rolePermission.getPermissionId(), new HashSet<Long>());
+                    }
+
+                    Set<Long> permissionItemIdSet = permissionItemIdSetMap.get(rolePermission.getPermissionId());
+
+                    String[] permissionItemIds = StringUtils.split(rolePermission.getPermissionItemIds(), " ,");
+                    for (String permissionItemId : permissionItemIds) {
+                        permissionItemIdSet.add(Long.valueOf(permissionItemId));
+                    }
+                }
             }
         }
 
@@ -108,6 +123,7 @@ public class LoginAction extends BaseAction {
         userSessionBean.setUser(user);
         userSessionBean.setRoleList(roleList);
         userSessionBean.setPermissionIdList(new ArrayList<Long>(permissionIdSet));
+        userSessionBean.setPermissionItemIdSetMap(permissionItemIdSetMap);
 
         super.getSession().put(Global.USER_SESSION, userSessionBean);
         super.setForwardUrl("/main.do");
@@ -166,7 +182,7 @@ public class LoginAction extends BaseAction {
                 tmpPermission.setPermissionItemStr(list2);
             }
             permList.add(tmpPermission);
-            tmpMenuId.add(tmpPermission.getMenuID());
+            tmpMenuId.add(tmpPermission.getMenuId());
         }
         //添加菜单
         for (Long menuId : tmpMenuId) {

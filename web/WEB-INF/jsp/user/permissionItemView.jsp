@@ -40,7 +40,7 @@
 		    		</tr>
 	    		</table>
     		</div>
-    		<div class="margin_10"><center><a href="${ctx}/user/permissionItem.do?permissionItem.permissionID=${permissionItem.permissionID}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
+    		<div class="margin_10"><center><a href="${ctx}/user/permissionItem.do?permissionItem.permissionId=${permissionItem.permissionId}" class="easyui-linkbutton" iconCls="icon-reload">返回列表</a></center></div>
     	</div>
     </div>
   </body>

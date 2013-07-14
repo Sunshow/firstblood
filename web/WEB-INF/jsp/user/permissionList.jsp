@@ -26,7 +26,7 @@
   <body>
     <div>
 		<div class="titlediv">您所在的位置：系统管理->菜单管理->权限列表</div>
-		<div class="add_div_margin"><a href="${ctx}/user/permission.do?action=input&permission.menuID=${permission.menuID}" class="easyui-linkbutton" iconCls="icon-add">添加权限</a></div>
+		<div class="add_div_margin"><a href="${ctx}/user/permission.do?action=input&permission.menuId=${permission.menuId}" class="easyui-linkbutton" iconCls="icon-add">添加权限</a></div>
 		<div>
 			<div>
 				<div class="pagediv">${menu.name}->权限列表</div>
@@ -60,7 +60,7 @@
 		    			<td><s:if test="menuItem == true">显示</s:if><s:else>不显示</s:else></td>
 		    			<td>${memo}</td>
 		    			<td><a href="${ctx}/user/permission.do?action=input&permission.id=${id}">修改</a></td>
-		    			<td><a href="${ctx}/user/permissionItem.do?permissionItem.permissionID=${id}&permission.menuID=${permission.menuID}">子权限管理</a></td>
+		    			<td><a href="${ctx}/user/permissionItem.do?permissionItem.permissionId=${id}&permission.menuId=${permission.menuId}">子权限管理</a></td>
 		    		</tr>
 		    		</s:iterator>
 		    	</table>

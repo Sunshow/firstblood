@@ -9,7 +9,7 @@
             <generator class="native"></generator>
         </id>
         <property name="name" not-null="true"/>
-        <property name="permissionID" column="permission_id" not-null="true"/>
+        <property name="permissionId" column="permission_id" not-null="true"/>
         <property name="orderView" column="order_view"/>
         <property name="methodName" column="method_name" not-null="true"/>
         <property name="valid" not-null="true"/>

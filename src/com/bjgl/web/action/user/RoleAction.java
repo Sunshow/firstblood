@@ -5,11 +5,7 @@ import com.bjgl.web.bean.TreeViewBean;
 import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.*;
-import com.bjgl.web.service.user.MenuService;
-import com.bjgl.web.service.user.PermissionService;
-import com.bjgl.web.service.user.RolePermissionService;
-import com.bjgl.web.service.user.RoleService;
-import com.bjgl.web.utils.StringUtil;
+import com.bjgl.web.service.user.*;
 import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -30,6 +26,7 @@ public class RoleAction extends BaseAction {
     private MenuService menuService;
 
 	private PermissionService permissionService;
+    private PermissionItemService permissionItemService;
 	private Role role;
 	
 	private String func;//用于区分输入的操作
@@ -69,7 +66,7 @@ public class RoleAction extends BaseAction {
                     for (Permission permission : allPermissionList) {
                         allPermissionMap.put(permission.getId(), permission);
 
-                        Long menuId = permission.getMenuID();
+                        Long menuId = permission.getMenuId();
                         List<Permission> menuPermissionList;
                         if (menuPermissionListMap.containsKey(menuId)) {
                             menuPermissionList = menuPermissionListMap.get(menuId);
@@ -82,7 +79,7 @@ public class RoleAction extends BaseAction {
                 }
 
                 // 一次性读出所有子权限
-                List<PermissionItem> allPermissionItemList = permissionService.listPermissionItems(new PermissionItem());
+                List<PermissionItem> allPermissionItemList = permissionItemService.findByExample(null, null);
 
                 Map<Long, PermissionItem> allPermissionItemMap = new HashMap<Long, PermissionItem>();
                 Map<Long, List<PermissionItem>> permissionItemListMap = new HashMap<Long, List<PermissionItem>>();
@@ -92,7 +89,7 @@ public class RoleAction extends BaseAction {
                     for (PermissionItem permissionItem : allPermissionItemList) {
                         allPermissionItemMap.put(permissionItem.getId(), permissionItem);
 
-                        Long permissionId = permissionItem.getPermissionID();
+                        Long permissionId = permissionItem.getPermissionId();
                         List<PermissionItem> permissionItemList;
                         if (permissionItemListMap.containsKey(permissionId)) {
                             permissionItemList = permissionItemListMap.get(permissionId);
@@ -236,7 +233,7 @@ public class RoleAction extends BaseAction {
 				strPermissionItems.deleteCharAt(strPermissionItems.lastIndexOf(","));
 			}
 			if(!StringUtils.isEmpty(strPermissionItems.toString())){
-				String[] arrPermsItem = StringUtil.split(strPermissionItems.toString(), ',');
+				String[] arrPermsItem = StringUtils.split(strPermissionItems.toString(), ',');
 				for(String pi : arrPermsItem){
 					permsItem.add(pi);
 				}
@@ -251,7 +248,7 @@ public class RoleAction extends BaseAction {
         // 转置map
         if (allPermissionList != null) {
             for (Permission permission : allPermissionList) {
-                Long menuId = permission.getMenuID();
+                Long menuId = permission.getMenuId();
                 List<Permission> menuPermissionList;
                 if (menuPermissionListMap.containsKey(menuId)) {
                     menuPermissionList = menuPermissionListMap.get(menuId);
@@ -264,14 +261,14 @@ public class RoleAction extends BaseAction {
         }
 
         // 一次性读出所有子权限
-        List<PermissionItem> allPermissionItemList = permissionService.listPermissionItems(new PermissionItem());
+        List<PermissionItem> allPermissionItemList = permissionItemService.findByExample(null, null);
 
         Map<Long, List<PermissionItem>> permissionItemListMap = new HashMap<Long, List<PermissionItem>>();
 
         // 转置map
         if (allPermissionItemList != null) {
             for (PermissionItem permissionItem : allPermissionItemList) {
-                Long permissionId = permissionItem.getPermissionID();
+                Long permissionId = permissionItem.getPermissionId();
                 List<PermissionItem> permissionItemList;
                 if (permissionItemListMap.containsKey(permissionId)) {
                     permissionItemList = permissionItemListMap.get(permissionId);
@@ -413,5 +410,9 @@ public class RoleAction extends BaseAction {
 
     public void setRolePermissionService(RolePermissionService rolePermissionService) {
         this.rolePermissionService = rolePermissionService;
+    }
+
+    public void setPermissionItemService(PermissionItemService permissionItemService) {
+        this.permissionItemService = permissionItemService;
     }
 }

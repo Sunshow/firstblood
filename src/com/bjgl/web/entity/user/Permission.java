@@ -1,7 +1,6 @@
 package com.bjgl.web.entity.user;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Permission implements Serializable {
 
@@ -9,7 +8,7 @@ public class Permission implements Serializable {
     private Long id;
     private String name;
     private String url;
-    private Long menuID;
+    private Long menuId;
     private Integer orderView;
     private String actionName;
     private String paramName;
@@ -50,12 +49,12 @@ public class Permission implements Serializable {
         this.url = url;
     }
 
-    public Long getMenuID() {
-        return menuID;
+    public Long getMenuId() {
+        return menuId;
     }
 
-    public void setMenuID(Long menuID) {
-        this.menuID = menuID;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public Integer getOrderView() {
