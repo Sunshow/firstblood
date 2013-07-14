@@ -37,9 +37,9 @@
 			<ul class="easyui-tree" animate="true">
 			<s:iterator value="menus" id="menuBean">
 	    		<li state="closed"><span><s:property value="#menuBean.menu.name"/></span>
-	    		<s:if test="#menuBean.permissions != null">
+	    		<s:if test="#menuBean.permissionList != null">
 	    		<ul>
-	    		<s:iterator value="#menuBean.permissions">
+	    		<s:iterator value="#menuBean.permissionList">
 	    		<li><span><a href="${ctx}${url}" title="${name}" class="showpage" target="contentframe">${name}</a></span></li>
 	    		</s:iterator>
 	    		</ul>

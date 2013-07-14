@@ -46,7 +46,7 @@
 		    			<td>备注</td>
 		    			<td colspan="2">操作</td>
 		    		</tr>
-		    		<s:iterator value="permissions" status="index">
+		    		<s:iterator value="permissionList" status="index">
 					<tr class="beover">
 		    			<td>${index.count}</td>
 		    			<td>${id}</td>

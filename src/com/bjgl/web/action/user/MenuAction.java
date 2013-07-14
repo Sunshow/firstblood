@@ -4,10 +4,13 @@ import java.util.List;
 
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.entity.user.Menu;
+import com.bjgl.web.service.user.MenuService;
 import com.bjgl.web.service.user.PermissionService;
 
 public class MenuAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
+
+    private MenuService menuService;
 
 	private PermissionService permissionService;
 	private Menu menu;
@@ -16,7 +19,7 @@ public class MenuAction extends BaseAction {
 	
 	public String handle(){
 		logger.info("进入查询菜单列表");
-		menus = permissionService.listMenus(menu);
+		menus = menuService.findByExample(menu, null);
 		return "list";
 	}
 	
@@ -28,7 +31,7 @@ public class MenuAction extends BaseAction {
 				super.setErrorMessage("菜单名称不能为空");
 				return "failure";
 			}
-			permissionService.manage(menu);
+            menuService.update(menu);
 		} else {
 			logger.error("更新菜单错误，提交表单为空");
 			super.setErrorMessage("更新菜单错误，提交表单不能为空");
@@ -43,7 +46,7 @@ public class MenuAction extends BaseAction {
 		logger.info("进入输入菜单信息");
 		if (menu != null) {
 			if (menu.getId() != null) {			
-				menu = permissionService.getMenu(menu.getId());
+				menu = menuService.findById(menu.getId());
 			}
 		} else {
 			menu = new Menu();
@@ -56,7 +59,7 @@ public class MenuAction extends BaseAction {
 	public String view() {
 		logger.info("进入查询菜单详情");
 		if (menu != null && menu.getId() != null) {
-			menu = permissionService.getMenu(menu.getId());
+			menu = menuService.findById(menu.getId());
 		} else {
 			logger.error("查询菜单详情，编码为空");
 			super.setErrorMessage("查询菜单详情，编码为空");
@@ -69,8 +72,7 @@ public class MenuAction extends BaseAction {
 	public String del() {
 		logger.info("进入删除菜单");
 		if (menu != null && menu.getId() != null) {
-			menu = permissionService.getMenu(menu.getId());
-			permissionService.del(menu);
+			menuService.delete(menu.getId());
 		} else {
 			logger.error("删除菜单，编码为空");
 			super.setErrorMessage("删除菜单，编码不能为空");
@@ -104,4 +106,8 @@ public class MenuAction extends BaseAction {
 	public void setMenus(List<Menu> menus) {
 		this.menus = menus;
 	}
+
+    public void setMenuService(MenuService menuService) {
+        this.menuService = menuService;
+    }
 }

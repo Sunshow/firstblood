@@ -89,7 +89,10 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(clazz);
-                criteria.add(example);
+
+                if (example != null) {
+                    criteria.add(example);
+                }
 
                 if (orders != null) {
                     for (int i = 0; i < orders.length; i++) {
@@ -106,7 +109,7 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
 
     @Override
     public List<T> findByExample(T example, PageBean pageBean, Order... orders) {
-        return this.findByExample(clazz, Example.create(example), pageBean, orders);
+        return this.findByExample(clazz, example == null ? null : Example.create(example), pageBean, orders);
     }
 
     @SuppressWarnings("unchecked")

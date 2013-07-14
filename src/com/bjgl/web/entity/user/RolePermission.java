@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.bjgl.web.entity.user;
 
 import java.io.Serializable;
@@ -11,9 +8,6 @@ import java.io.Serializable;
  */
 public class RolePermission implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1939749703899092509L;
 	private Long id;
 	private Long roleId;

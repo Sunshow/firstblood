@@ -5,7 +5,9 @@ import com.bjgl.web.bean.TreeViewBean;
 import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.*;
+import com.bjgl.web.service.user.MenuService;
 import com.bjgl.web.service.user.PermissionService;
+import com.bjgl.web.service.user.RolePermissionService;
 import com.bjgl.web.service.user.RoleService;
 import com.bjgl.web.utils.StringUtil;
 import net.sf.json.JSONArray;
@@ -22,6 +24,10 @@ public class RoleAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
 
     private RoleService roleService;
+
+    private RolePermissionService rolePermissionService;
+
+    private MenuService menuService;
 
 	private PermissionService permissionService;
 	private Role role;
@@ -53,7 +59,7 @@ public class RoleAction extends BaseAction {
 			if (permissions != null && permissions.size() != 0) {
 
                 // 一次性读出所有权限
-                List<Permission> allPermissionList = permissionService.listPermissions(null);
+                List<Permission> allPermissionList = permissionService.findByExample(null, null);
 
                 Map<Long, Permission> allPermissionMap = new HashMap<Long, Permission>();
                 Map<Long, List<Permission>> menuPermissionListMap = new HashMap<Long, List<Permission>>();
@@ -130,7 +136,7 @@ public class RoleAction extends BaseAction {
 						}
 					}
 					rolePermList.add(rp);
-					perm.setPermissionItemStr(list);
+					//perm.setPermissionItemStr(list);
 					permList.add(perm);
 				}
 			}
@@ -146,7 +152,7 @@ public class RoleAction extends BaseAction {
             /*
 			if (userSessionBean != null && role.getId() != null && userSessionBean.getRole().getId().longValue() == role.getId().longValue()) {
 				userSessionBean.setRole(role);
-				userSessionBean.setPermissions(permList);
+				userSessionBean.setPermissionList(permList);
 				userSessionBean.setPermissionItems(permItemList);
 			}
 			*/
@@ -217,7 +223,7 @@ public class RoleAction extends BaseAction {
 		List<String> permsItem = new ArrayList<String>();
 		StringBuffer strPermissionItems = new StringBuffer("");
 		if (role != null && role.getId() != null) {
-			List<RolePermission> rps = permissionService.getPermissionsByRole(role);
+			List<RolePermission> rps = rolePermissionService.findByRoleId(role.getId());
 
 			for(int i = 0; i < rps.size(); i++){
 				perms.add(String.valueOf(rps.get(i).getPermissionId()));
@@ -238,7 +244,7 @@ public class RoleAction extends BaseAction {
 		}
 
         // 一次性读出所有权限
-        List<Permission> allPermissionList = permissionService.listPermissions(null);
+        List<Permission> allPermissionList = permissionService.findByExample(null, null);
 
         Map<Long, List<Permission>> menuPermissionListMap = new HashMap<Long, List<Permission>>();
 
@@ -278,7 +284,7 @@ public class RoleAction extends BaseAction {
         }
 
 		List<TreeViewBean> list = new ArrayList<TreeViewBean>();
-		List<Menu> menuList = permissionService.listMenus(null);
+		List<Menu> menuList = menuService.findByExample(null, null);
 
 		if (menuList != null) {
 			for (Menu menu: menuList) {
@@ -399,5 +405,13 @@ public class RoleAction extends BaseAction {
 
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;
+    }
+
+    public void setMenuService(MenuService menuService) {
+        this.menuService = menuService;
+    }
+
+    public void setRolePermissionService(RolePermissionService rolePermissionService) {
+        this.rolePermissionService = rolePermissionService;
     }
 }

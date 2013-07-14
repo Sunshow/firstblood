@@ -1,108 +1,110 @@
 package com.bjgl.web.interceptor;
 
 import com.bjgl.web.action.BaseAction;
+import com.bjgl.web.bean.MenuBean;
+import com.bjgl.web.bean.MenuPermissionBean;
 import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
+import com.bjgl.web.entity.user.Menu;
 import com.bjgl.web.entity.user.Permission;
-import com.bjgl.web.entity.user.PermissionItem;
-import com.bjgl.web.service.user.PermissionService;
-import com.bjgl.web.utils.StringUtil;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import org.apache.struts2.ServletActionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 public class UserSessionInterceptor extends AbstractInterceptor {
 
-    private static final long serialVersionUID = 5545476931270525263L;
+    private static final long serialVersionUID = 8993269523298061799L;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private PermissionService permissionService;
+    private MenuPermissionBean menuPermissionBean;
 
     public String intercept(ActionInvocation invocation) throws Exception {
-        boolean pass = false;
         logger.info("Enter UserSessionInterceptor");
         ActionContext ac = invocation.getInvocationContext();
-        String actionName = ac.getName();
-        Map<?, ?> paramMap = ac.getParameters();
-        logger.info("ActionName:{}", actionName);
-        logger.info("Parameters:{}", paramMap.toString());
         UserSessionBean userSessionBean = (UserSessionBean) ac.getSession().get(Global.USER_SESSION);
-
-        //HttpServletRequest request = (HttpServletRequest)ac.get(ServletActionContext.HTTP_REQUEST);
-        //request.setAttribute("Sunshow", "asdfasfdasf");
 
         if (userSessionBean == null) {
             BaseAction basetion = (BaseAction) invocation.getAction();
             basetion.setErrorMessage("您的session丢失，请重新登录");
             return "index";
         }
-        String message = StringUtil.getStringByActionHashMap(paramMap);
-        if (message != null && message.length() >= 1000) {
-            message = message.substring(0, 900);
-        }
-        logger.info("Start judge permission");
-        List<Permission> permissions = userSessionBean.getPermissions();
-        for (Permission permission : permissions) {
-            if (permission.getActionName().trim().equals(actionName.trim())) {
-                if (permission.getParamName() != null && !"".equals(permission.getParamName())) {
-                    String[] paramValue = (String[]) paramMap.get(permission.getParamName());
-                    if (paramValue == null || paramValue.length == 0) {
-                        continue;
-                    }
-                    if (!paramValue[0].equals(permission.getParamValue())) {
-                        continue;
-                    }
-                }
-                String[] actions = (String[]) paramMap.get("action");
-                if (actions == null || actions.length == 0) {
-                    pass = true;
-                    break;
-                }
-                String action = actions[0];
-                if ("handle".equals(action)) {
-                    pass = true;
-                    break;
-                }
-                List<PermissionItem> permissionItems = null;
-                permissionItems = permissionService.listPermissionItems(permission);
 
-                if (action != null && permissionItems != null
-                        && permissionItems.size() > 0
-                        && permission.getPermissionItemStr() != null
-                        && permission.getPermissionItemStr().size() > 0) {
-                    for (PermissionItem permissionItem : permissionItems) {
-                        for (String permItemId : permission.getPermissionItemStr()) {
-                            if (permissionItem.getId().toString().equals(permItemId)) {
-                                if (permissionItem.getMethodName().equals(action)) {
-                                    pass = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+        List<Permission> permissionList = menuPermissionBean.getPermissionListById(userSessionBean.getPermissionIdList());
+
+        Map<Long, List<Permission>> menuPermissionListMap = new HashMap<Long, List<Permission>>();
+
+        Set<Long> menuIdSet = new HashSet<Long>();
+        if (permissionList != null) {
+            for (Permission permission : permissionList) {
+                menuIdSet.add(permission.getMenuID());
+
+                if (permission.getMenuItem() == null || !permission.getMenuItem()) {
+                    continue;
                 }
+
+                if (!menuPermissionListMap.containsKey(permission.getMenuID())) {
+                    menuPermissionListMap.put(permission.getMenuID(), new ArrayList<Permission>());
+                }
+
+                menuPermissionListMap.get(permission.getMenuID()).add(permission);
             }
         }
-        logger.info("End judge permission");
-        logger.info("Judge permission result:{}", pass);
-        logger.info("Exit UserSessionInterceptor");
-        if (pass) {
-            return invocation.invoke();
-        } else {
-            return "unauthorized";
+
+        List<Menu> menuList = menuPermissionBean.getMenuListById(new ArrayList<Long>(menuIdSet));
+
+        List<MenuBean> menuBeanList = new ArrayList<MenuBean>();
+
+        if (menuList != null) {
+            for (Menu menu : menuList) {
+                MenuBean menuBean = new MenuBean();
+                menuBean.setMenu(menu);
+
+                List<Permission> menuPermissionList = menuPermissionListMap.get(menu.getId());
+                if (menuPermissionList != null) {
+                    // 排序
+                    Collections.sort(menuPermissionList, new Comparator<Permission>() {
+                        public int compare(Permission arg0, Permission arg1) {
+                            Integer o0 = arg0.getOrderView() == null ? 0 : arg0.getOrderView();
+                            Integer o1 = arg1.getOrderView() == null ? 0 : arg1.getOrderView();
+
+                            if (o0.intValue() == o1.intValue()) {
+                                return arg0.getId().compareTo(arg1.getId());
+                            }
+                            return o1.compareTo(o0);
+                        }
+                    });
+                    menuBean.setPermissionList(menuPermissionList);
+                }
+
+                menuBeanList.add(menuBean);
+            }
+
+            // 排序
+            Collections.sort(menuBeanList, new Comparator<MenuBean>() {
+                public int compare(MenuBean arg0, MenuBean arg1) {
+                    Integer o0 = arg0.getMenu().getOrderView() == null ? 0 : arg0.getMenu().getOrderView();
+                    Integer o1 = arg1.getMenu().getOrderView() == null ? 0 : arg1.getMenu().getOrderView();
+                    if (o0.intValue() == o1.intValue()) {
+                        return arg0.getMenu().getId().compareTo(arg1.getMenu().getId());
+                    }
+                    return o1.compareTo(o0);
+                }
+            });
         }
+
+        HttpServletRequest request = (HttpServletRequest)ac.get(ServletActionContext.HTTP_REQUEST);
+        request.setAttribute(Global.MENU_BEAN_LIST, menuBeanList);
+
+        return invocation.invoke();
     }
 
-    public PermissionService getPermissionService() {
-        return permissionService;
-    }
-
-    public void setPermissionService(PermissionService permissionService) {
-        this.permissionService = permissionService;
+    public void setMenuPermissionBean(MenuPermissionBean menuPermissionBean) {
+        this.menuPermissionBean = menuPermissionBean;
     }
 }

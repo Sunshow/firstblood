@@ -4,21 +4,17 @@ import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.bean.UserSessionBean;
 import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.Role;
+import com.bjgl.web.entity.user.RolePermission;
 import com.bjgl.web.entity.user.User;
 import com.bjgl.web.entity.user.UserRole;
-import com.bjgl.web.service.user.PermissionService;
-import com.bjgl.web.service.user.RoleService;
-import com.bjgl.web.service.user.UserRoleService;
-import com.bjgl.web.service.user.UserService;
+import com.bjgl.web.service.user.*;
 import com.bjgl.web.utils.CaptchaServiceSingleton;
 import com.bjgl.web.utils.CoreHttpUtils;
 import com.octo.captcha.service.CaptchaServiceException;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class LoginAction extends BaseAction {
     private static final long serialVersionUID = -8830679912602886965L;
@@ -26,6 +22,7 @@ public class LoginAction extends BaseAction {
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
+    private RolePermissionService rolePermissionService;
 
     private PermissionService permissionService;
 
@@ -92,15 +89,25 @@ public class LoginAction extends BaseAction {
             }
         }
 
+        // 汇总用户权限
+        Set<Long> permissionIdSet = new HashSet<Long>();
+        for (Role role : roleList) {
+            List<RolePermission> rolePermissionList = rolePermissionService.findByRoleId(role.getId());
+            for (RolePermission rolePermission : rolePermissionList) {
+                permissionIdSet.add(rolePermission.getPermissionId());
+            }
+        }
+
         // 登录成功，更新最后登录时间
         user.setLastLoginTime(user.getLoginTime());
         user.setLoginTime(new Date());
         this.userService.update(user);
 
-        //创建userSessionBean
+        // 创建userSessionBean
         UserSessionBean userSessionBean = new UserSessionBean();
         userSessionBean.setUser(user);
         userSessionBean.setRoleList(roleList);
+        userSessionBean.setPermissionIdList(new ArrayList<Long>(permissionIdSet));
 
         super.getSession().put(Global.USER_SESSION, userSessionBean);
         super.setForwardUrl("/main.do");
@@ -181,7 +188,7 @@ public class LoginAction extends BaseAction {
             }
         });
 
-        userSessionBean.setPermissions(permList);
+        userSessionBean.setPermissionList(permList);
         userSessionBean.setMenus(menuList);
         super.getSession().put(Global.USER_SESSION, userSessionBean);
         super.setForwardUrl("/main.do");
@@ -283,5 +290,9 @@ public class LoginAction extends BaseAction {
 
     public void setUserRoleService(UserRoleService userRoleService) {
         this.userRoleService = userRoleService;
+    }
+
+    public void setRolePermissionService(RolePermissionService rolePermissionService) {
+        this.rolePermissionService = rolePermissionService;
     }
 }

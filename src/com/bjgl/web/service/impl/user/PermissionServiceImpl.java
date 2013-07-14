@@ -3,53 +3,18 @@ package com.bjgl.web.service.impl.user;
 import com.bjgl.web.bean.PageBean;
 import com.bjgl.web.dao.user.*;
 import com.bjgl.web.entity.user.*;
+import com.bjgl.web.service.impl.AbstractBaseServiceImpl;
 import com.bjgl.web.service.user.PermissionService;
-import com.bjgl.web.utils.CharsetConstant;
-import com.bjgl.web.utils.CoreStringUtils;
 
 import java.util.*;
 
-public class PermissionServiceImpl implements PermissionService {
+public class PermissionServiceImpl extends AbstractBaseServiceImpl<Permission> implements PermissionService {
 	private MenuDao menuDao;
 	private RoleDao roleDao;
 	private UserDao userDao;
 	private UserRoleDao userRoleDao;
 	private RolePermissionDao rolePermissionDao;
 	private PermissionItemDao permissionItemDao;
-	private PermissionDao permissionDao;
-	
-	public void manage(Menu menu) {
-		menuDao.merge(menu);
-	}
-
-	public List<Menu> listMenus(Menu menu){
-		return menuDao.list(menu);
-	}
-
-	public Menu getMenu(Long ID){
-		return menuDao.get(ID);
-	}
-
-	public void del(Menu menu){
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void manage(Permission permission){
-		permissionDao.merge(permission);
-	}
-
-	public List<Permission> listPermissions(Permission permission) {
-		return permissionDao.list(permission);
-	}
-
-	public Permission getPermission(Long ID){
-		return permissionDao.get(ID);
-	}
-
-	public void del(Permission permission){
-		permissionDao.del(permission);
-	}
 
 	public void manage(PermissionItem permissionItem){
 		permissionItemDao.merge(permissionItem);
@@ -72,34 +37,6 @@ public class PermissionServiceImpl implements PermissionService {
 		return permissionItemDao.list(permission);
 	}
 
-	public void manage(RolePermission rolePermission){
-		rolePermissionDao.merge(rolePermission);
-	}
-
-	public void manageBatch(List<RolePermission> rolePremissionList) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void del(RolePermission rolePremission){
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void delBatch(List<RolePermission> rolePremissionList) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public List<RolePermission> getPermissionsByRole(Role role) {
-		return rolePermissionDao.getPermissionsByRole(role);
-	}
-
-	public void manage(Role role){
-		// TODO Auto-generated method stub
-
-	}
-
 	public void manage(Role role, List<RolePermission> rolePermissions) {
 
         // 先保存角色
@@ -107,7 +44,7 @@ public class PermissionServiceImpl implements PermissionService {
         Role saveRole = role;
 
         // 先取出已有的角色权限
-        List<RolePermission> srcRolePermissions = this.getPermissionsByRole(role);
+        List<RolePermission> srcRolePermissions = rolePermissionDao.findByRoleId(role.getId());
 
         // 按照permission转置map
         Map<Long, RolePermission> srcRolePermissionMap = new HashMap<Long, RolePermission>();
@@ -184,7 +121,7 @@ public class PermissionServiceImpl implements PermissionService {
 
         // 执行保存和更新
         for (RolePermission rolePermission : mergeRolePermissionList) {
-            rolePermissionDao.merge(rolePermission);
+            rolePermissionDao.save(rolePermission);
         }
 	}
 
@@ -247,14 +184,6 @@ public class PermissionServiceImpl implements PermissionService {
 	public void setPermissionItemDao(PermissionItemDao permissionItemDao) {
 		this.permissionItemDao = permissionItemDao;
 	
-	}
-
-	public PermissionDao getPermissionDao() {
-		return permissionDao;
-	}
-
-	public void setPermissionDao(PermissionDao permissionDao) {
-		this.permissionDao = permissionDao;
 	}
 
 	public MenuDao getMenuDao() {

@@ -1,43 +1,19 @@
 package com.bjgl.web.service.user;
 
+import com.bjgl.web.bean.PageBean;
+import com.bjgl.web.entity.user.*;
+import com.bjgl.web.service.BaseService;
+
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import com.bjgl.web.bean.PageBean;
-import com.bjgl.web.entity.user.Menu;
-import com.bjgl.web.entity.user.Permission;
-import com.bjgl.web.entity.user.PermissionItem;
-import com.bjgl.web.entity.user.Role;
-import com.bjgl.web.entity.user.RolePermission;
-import com.bjgl.web.entity.user.User;
-import com.bjgl.web.entity.user.UserRole;
+public interface PermissionService extends BaseService<Permission> {
 
-public interface PermissionService {
-
-	/*menu*/
-	void manage(Menu menu);
-	List<Menu> listMenus(Menu menu); 
-	Menu getMenu(Long ID);
-	void del(Menu menu);
-	
-	
-	void manage(Permission permission);
-	List<Permission> listPermissions(Permission permission); 
-	Permission getPermission(Long ID);
-	void del(Permission permission);
-	
 	void manage(PermissionItem permissionItem);
 	List<PermissionItem> listPermissionItems(PermissionItem permissionItem); 
 	PermissionItem getPermissionItem(Long ID);
 	void del(PermissionItem permissionItem);
 	List<PermissionItem> listPermissionItems(Permission permission);
-	
-	void manage(RolePermission rolePremission);
-	void manageBatch(List<RolePermission> rolePremissionList);
-	void del(RolePermission rolePremission);
-	void delBatch(List<RolePermission> rolePremissionList);
-	List<RolePermission> getPermissionsByRole(Role role);
 	
     public void manage(Role role, List<RolePermission> rolePermissions);
 	

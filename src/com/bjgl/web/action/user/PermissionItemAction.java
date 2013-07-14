@@ -20,7 +20,7 @@ public class PermissionItemAction extends BaseAction {
 	public String handle() {
 		logger.info("进入查询子权限列表");
 		if (permissionItem != null && permissionItem.getPermissionID() != null) {
-			permission = permissionService.getPermission(permissionItem.getPermissionID());
+			permission = permissionService.findById(permissionItem.getPermissionID());
 		}
 		permissionItems = permissionService.listPermissionItems(permissionItem);
 		return "list";

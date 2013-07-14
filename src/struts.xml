@@ -12,15 +12,19 @@
                          class="com.bjgl.web.interceptor.HandleLogInterceptor"/>
             <interceptor name="userSessionInterceptor"
                          class="com.bjgl.web.interceptor.UserSessionInterceptor"/>
+            <interceptor name="userPermissionInterceptor"
+                         class="com.bjgl.web.interceptor.UserPermissionInterceptor"/>
             <interceptor-stack name="userSessionStack">
                 <interceptor-ref name="completeStack"/>
                 <interceptor-ref name="logInterceptor"/>
                 <interceptor-ref name="userSessionInterceptor"/>
+                <interceptor-ref name="userPermissionInterceptor"/>
             </interceptor-stack>
             <interceptor-stack name="handleUserSessionStack">
                 <interceptor-ref name="completeStack"/>
                 <interceptor-ref name="handleLogInterceptor"/>
                 <interceptor-ref name="userSessionInterceptor"/>
+                <interceptor-ref name="userPermissionInterceptor"/>
             </interceptor-stack>
         </interceptors>
         <global-results>
@@ -42,11 +46,13 @@
         <action name="main" class="mainAction">
             <interceptor-ref name="completeStack"/>
             <interceptor-ref name="handleLogInterceptor"/>
+            <interceptor-ref name="userSessionInterceptor"/>
             <result name="main">/WEB-INF/jsp/main.jsp</result>
         </action>
         <action name="logout" class="logoutAction">
             <interceptor-ref name="completeStack"/>
             <interceptor-ref name="handleLogInterceptor"/>
+            <interceptor-ref name="userSessionInterceptor"/>
             <result name="forward" type="redirect">${forwardUrl}</result>
         </action>
     </package>

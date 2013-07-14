@@ -8,19 +8,16 @@ import com.bjgl.web.entity.user.Permission;
 
 public class MenuBean implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3764402465865930790L;
 
 	private Menu menu;
-	private List<Permission> permissions;
+	private List<Permission> permissionList;
 	
-	public List<Permission> getPermissions() {
-		return permissions;
+	public List<Permission> getPermissionList() {
+		return permissionList;
 	}
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
+	public void setPermissionList(List<Permission> permissionList) {
+		this.permissionList = permissionList;
 	}
 	public Menu getMenu() {
 		return menu;

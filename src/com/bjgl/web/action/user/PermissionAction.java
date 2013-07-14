@@ -5,10 +5,13 @@ import java.util.List;
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.entity.user.Menu;
 import com.bjgl.web.entity.user.Permission;
+import com.bjgl.web.service.user.MenuService;
 import com.bjgl.web.service.user.PermissionService;
 
 public class PermissionAction extends BaseAction {
 	private static final long serialVersionUID = 2436161530465382824L;
+
+    private MenuService menuService;
 
 	private PermissionService permissionService;
 	private Permission permission;
@@ -19,9 +22,9 @@ public class PermissionAction extends BaseAction {
 	public String handle(){
 		logger.info("进入查询权限列表");
 		if (permission != null && permission.getMenuID() != null) {
-			menu = permissionService.getMenu(permission.getMenuID());
+			menu = menuService.findById(permission.getMenuID());
 		}
-		permissions = permissionService.listPermissions(permission);
+		permissions = permissionService.findByExample(permission, null);
 		return "list";
 	}
 	
@@ -38,7 +41,7 @@ public class PermissionAction extends BaseAction {
 				super.setErrorMessage("权限action名称不能为空");
 				return "failure";
 			}
-			permissionService.manage(permission);
+			permissionService.update(permission);
 		} else {
 			logger.error("更新权限错误，提交表单为空");
 			super.setErrorMessage("更新权限错误，提交的表单不能为空");
@@ -53,7 +56,7 @@ public class PermissionAction extends BaseAction {
 		logger.info("进入输入权限信息");
 		if (permission != null) {
 			if (permission.getId() != null) {				
-				permission = permissionService.getPermission(permission.getId());
+				permission = permissionService.findById(permission.getId());
 			} else {
 				permission.setValid(true);
 				permission.setOrderView(0);
@@ -65,7 +68,7 @@ public class PermissionAction extends BaseAction {
 	public String view() {
 		logger.info("进入查看权限详情");
 		if (permission != null && permission.getId() != null) {
-			permission = permissionService.getPermission(permission.getId());
+			permission = permissionService.findById(permission.getId());
 		} else {
 			logger.error("查看权限详情，编码为空");
 			super.setErrorMessage("查看权限详情，编码不能为空");
@@ -78,8 +81,7 @@ public class PermissionAction extends BaseAction {
 	public String del() {
 		logger.info("进入删除权限");
 		if (permission != null && permission.getId() != null) {
-			permission = permissionService.getPermission(permission.getId());
-			permissionService.del(permission);
+			permissionService.delete(permission.getId());
 		} else {
 			logger.error("删除权限，编码为空");
 			super.setErrorMessage("删除权限，编码不能为空");
@@ -122,4 +124,8 @@ public class PermissionAction extends BaseAction {
 	public void setMenu(Menu menu) {
 		this.menu = menu;
 	}
+
+    public void setMenuService(MenuService menuService) {
+        this.menuService = menuService;
+    }
 }
