@@ -95,6 +95,10 @@ public class BaseAction extends ActionSupport implements SessionAware {
         }
     }
 
+    protected void errorForward(String forward, String message) {
+        throw new StrutsRequestException(message, forward);
+    }
+
     protected String getContextPath() {
         HttpServletRequest request = ServletActionContext.getRequest();
         return request.getContextPath();

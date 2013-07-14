@@ -44,7 +44,7 @@ public class LoginAction extends BaseAction {
 
             Boolean isVerifyCodeRight = Boolean.FALSE;
             HttpServletRequest request = ServletActionContext.getRequest();
-            String captchaId = null;
+            String captchaId;
             logger.info("request.getSession(false): {}", request.getSession(false));
             if (request.getSession(false) == null) {
                 captchaId = request.getSession(true).getId();
@@ -53,23 +53,17 @@ public class LoginAction extends BaseAction {
             }
             try {
                 isVerifyCodeRight = CaptchaServiceSingleton.getInstance()
-                        .validateResponseForID(captchaId, verifyCode);
+                        .validateResponseForID(captchaId, this.getVerifyCode());
             } catch (CaptchaServiceException e) {
-                logger.error("验证码超时");
-                super.setErrorMessage("验证码超时,请重新登录");
-                return "index";
+                this.errorForward(INDEX, "验证码超时");
             }
             if (!isVerifyCodeRight) {
-                logger.error("验证码错误");
-                super.setErrorMessage("验证码错误");
-                return "index";
+                this.errorForward(INDEX, "验证码错误");
             }
         }
         User user = userService.login(this.getUsername(), this.getPassword());
         if (user == null) {
-            logger.error("用户名或密码错误");
-            super.setErrorMessage("用户名或密码错误");
-            return "index";
+            this.errorForward(INDEX, "用户名或密码错误");
         }
 
         List<UserRole> userRoleList;
