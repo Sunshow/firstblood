@@ -191,12 +191,10 @@ public class RoleAction extends BaseAction {
 		if (role != null && role.getId() != null) {
 			role = roleService.findById(role.getId());
 		} else {
-			logger.error("查看角色详情，编码为空");
-			super.setErrorMessage("查看角色详情，编码不能为空");
-			return "failure";
+            this.errorForward(INDEX, "查看角色详情，编码不能为空");
 		}
 		logger.info("查看角色详情结束");
-		return "view";
+		return VIEW;
 	}
 	
 	public String del() {
@@ -204,13 +202,11 @@ public class RoleAction extends BaseAction {
 		if (role != null && role.getId() != null) {
 			roleService.delete(role.getId());
 		} else {
-			logger.error("删除角色， 编码为空");
-			super.setErrorMessage("删除角色，编码不能为空");
-			return "failure";
+            this.errorForward(INDEX, "删除角色，编码不能为空");
 		}
 		super.setForwardUrl("/user/role.do");
 		logger.info("删除角色结束");
-		return "forward";
+		return FORWARD;
 	}
 	
 	public void findPermissions() {

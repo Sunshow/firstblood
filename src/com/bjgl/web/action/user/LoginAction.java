@@ -81,7 +81,7 @@ public class LoginAction extends BaseAction {
                     continue;
                 }
                 roleList.add(role);
-                if (role.isRestriction()) {//限定ip时，进行有效ip段验证
+                if (role.getRestriction() != null && role.getRestriction()) {//限定ip时，进行有效ip段验证
                     String remoteIp = getRemoteIp(ServletActionContext.getRequest());
                     if (!matchingIp(role.getRestrictionIp(), remoteIp)) {
                         this.errorForward(INDEX, "您的IP地址已被禁止登录");
@@ -129,88 +129,6 @@ public class LoginAction extends BaseAction {
         super.setForwardUrl("/main.do");
         logger.info("验证登录结束");
         return FORWARD;
-
-        /*
-
-        List<Permission> permList = new ArrayList<Permission>();
-        List<Menu> menuList = new ArrayList<Menu>();
-        List<RolePermission> rolePermList = new ArrayList<RolePermission>();
-
-
-        // 一次性读出所有菜单
-        List<Menu> allMenuList = permissionService.listMenus(null);
-        Map<Long, Menu> allMenuMap = new HashMap<Long, Menu>();
-        // 转置map
-        if (allMenuList != null) {
-            for (Menu menu : allMenuList) {
-                allMenuMap.put(menu.getId(), menu);
-            }
-        }
-
-        // 一次性读出所有权限
-        List<Permission> allPermissionList = permissionService.listPermissions(null);
-        Map<Long, Permission> allPermissionMap = new HashMap<Long, Permission>();
-        // 转置map
-        if (allPermissionList != null) {
-            for (Permission permission : allPermissionList) {
-                allPermissionMap.put(permission.getId(), permission);
-            }
-        }
-
-
-        rolePermList = permissionService.getPermissionsByRole(role);
-        if (rolePermList == null || rolePermList.size() == 0) {
-            logger.error("您所拥有的角色没有任何权限");
-            super.setErrorMessage("您所拥有的角色没有任何权限，请联系管理员");
-            return "index";
-        }
-        Set<Long> tmpMenuId = new HashSet<Long>();
-        for (RolePermission rp : rolePermList) {
-            //添加主权限
-            Permission tmpPermission = allPermissionMap.get(rp.getPermissionId());
-            if (tmpPermission == null) {
-                // 权限已经被删除
-                continue;
-            }
-            String permissionItemIds = rp.getPermissionItemIds();
-            if (permissionItemIds != null && !"".equals(permissionItemIds)) {
-                List<String> list2 = new ArrayList<String>();
-                String[] permItemNode = StringUtils.split(permissionItemIds, ',');
-                for (String permItemStr : permItemNode) {
-                    list2.add(permItemStr);
-                }
-                tmpPermission.setPermissionItemStr(list2);
-            }
-            permList.add(tmpPermission);
-            tmpMenuId.add(tmpPermission.getMenuId());
-        }
-        //添加菜单
-        for (Long menuId : tmpMenuId) {
-            Menu menu = allMenuMap.get(menuId);
-            menuList.add(menu);
-        }
-
-        //按orderView排序 数值大的在前面
-        Collections.sort(menuList, new Comparator<Menu>() {
-            public int compare(Menu arg0, Menu arg1) {
-                return arg1.getOrderView().compareTo(arg0.getOrderView());
-            }
-        });
-
-        //按orderView排序 数值大的在前面
-        Collections.sort(permList, new Comparator<Permission>() {
-            public int compare(Permission arg0, Permission arg1) {
-                return arg1.getOrderView().compareTo(arg0.getOrderView());
-            }
-        });
-
-        userSessionBean.setPermissionList(permList);
-        userSessionBean.setMenus(menuList);
-        super.getSession().put(Global.USER_SESSION, userSessionBean);
-        super.setForwardUrl("/main.do");
-        logger.info("验证登录结束");
-        return "forward";
-        */
     }
 
     //ip段匹配
