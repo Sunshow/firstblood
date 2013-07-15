@@ -49,15 +49,28 @@ public class MenuPermissionBean {
         }
     }
 
+    protected Map<Long, Menu> getMenuMap() {
+        Map<Long, Menu> menuMap;
+        synchronized (this) {
+            menuMap = this.menuMap;
+        }
+        return menuMap;
+    }
+
+    protected Map<Long, Permission> getPermissionMap() {
+        Map<Long, Permission> permissionMap;
+        synchronized (this) {
+            permissionMap = this.permissionMap;
+        }
+        return permissionMap;
+    }
+
     public List<Menu> getMenuListById(List<Long> menuIdList) {
         if (menuIdList == null) {
             return null;
         }
 
-        Map<Long, Menu> menuMap;
-        synchronized (this) {
-            menuMap = this.menuMap;
-        }
+        Map<Long, Menu> menuMap = this.getMenuMap();
         if (menuMap == null) {
             return null;
         }
@@ -74,10 +87,7 @@ public class MenuPermissionBean {
             return null;
         }
 
-        Map<Long, Permission> permissionMap;
-        synchronized (this) {
-            permissionMap = this.permissionMap;
-        }
+        Map<Long, Permission> permissionMap = this.getPermissionMap();
         if (permissionMap == null) {
             return null;
         }

@@ -2,22 +2,16 @@ package com.bjgl.web.action.user;
 
 import com.bjgl.web.action.BaseAction;
 import com.bjgl.web.bean.TreeViewBean;
-import com.bjgl.web.bean.UserSessionBean;
-import com.bjgl.web.constant.Global;
 import com.bjgl.web.entity.user.*;
 import com.bjgl.web.service.user.*;
 import net.sf.json.JSONArray;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RoleAction extends BaseAction {
-	private static final long serialVersionUID = 2436161530465382824L;
+    private static final long serialVersionUID = 2436161530465382824L;
 
     private RoleService roleService;
 
@@ -25,216 +19,155 @@ public class RoleAction extends BaseAction {
 
     private MenuService menuService;
 
-	private PermissionService permissionService;
+    private PermissionService permissionService;
     private PermissionItemService permissionItemService;
-	private Role role;
-	
-	private String func;//用于区分输入的操作
-	
-	private List<Long> permissions;
-	private List<Long> permissionsItem;
-	
-	private List<Role> roleList;
-	
-	public String handle(){
-		logger.info("进入查询角色");
+    private Role role;
+
+    private String func;//用于区分输入的操作
+
+    private List<Long> permissionIdList;
+    private List<Long> permissionItemIdList;
+
+    private List<Role> roleList;
+
+    public String handle() {
+        logger.info("进入查询角色");
         roleList = roleService.findByExample(role, null);
-		return LIST;
-	}
-	
-	public String manage() {
-		logger.info("进入更新角色信息");
-		List<Permission> permList = new ArrayList<Permission>();
-		List<PermissionItem> permItemList = new ArrayList<PermissionItem>();
-		List<RolePermission> rolePermList = new ArrayList<RolePermission>();
-		if (role != null) {
-			if (role.getName() == null || "".equals(role.getName())) {
-				logger.error("角色名称为空");
-				super.setErrorMessage("角色名称不能为空");
-				return "failure";
-			}
-			if (permissions != null && permissions.size() != 0) {
+        return LIST;
+    }
 
-                // 一次性读出所有权限
-                List<Permission> allPermissionList = permissionService.findByExample(null, null);
+    public String manage() {
+        logger.info("进入更新角色信息");
 
-                Map<Long, Permission> allPermissionMap = new HashMap<Long, Permission>();
-                Map<Long, List<Permission>> menuPermissionListMap = new HashMap<Long, List<Permission>>();
+        if (role == null) {
+            this.errorForward(FAILURE, "添加角色错误，提交表单不能为空");
+        }
 
-                // 转置map
-                if (allPermissionList != null) {
-                    for (Permission permission : allPermissionList) {
-                        allPermissionMap.put(permission.getId(), permission);
+        if (StringUtils.isBlank(role.getName())) {
+            this.errorForward(FAILURE, "角色名称不能为空");
+        }
 
-                        Long menuId = permission.getMenuId();
-                        List<Permission> menuPermissionList;
-                        if (menuPermissionListMap.containsKey(menuId)) {
-                            menuPermissionList = menuPermissionListMap.get(menuId);
-                        } else {
-                            menuPermissionList = new ArrayList<Permission>();
-                            menuPermissionListMap.put(menuId, menuPermissionList);
-                        }
-                        menuPermissionList.add(permission);
-                    }
+        List<RolePermission> rolePermissionList = new ArrayList<RolePermission>();
+
+        if (permissionIdList != null && !permissionIdList.isEmpty()) {
+
+            // 一次性读出所有子权限
+            List<PermissionItem> allPermissionItemList = permissionItemService.findByExample(null, null);
+
+            Map<Long, Set<Long>> permissionIdAndPermissionItemIdSetMap = new HashMap<Long, Set<Long>>();
+
+            for (PermissionItem permissionItem : allPermissionItemList) {
+                Long permissionId = permissionItem.getPermissionId();
+                Long permissionItemId = permissionItem.getId();
+
+                if (!permissionIdAndPermissionItemIdSetMap.containsKey(permissionId)) {
+                    permissionIdAndPermissionItemIdSetMap.put(permissionId, new HashSet<Long>());
                 }
 
-                // 一次性读出所有子权限
-                List<PermissionItem> allPermissionItemList = permissionItemService.findByExample(null, null);
+                Set<Long> permissionItemIdSet = permissionIdAndPermissionItemIdSetMap.get(permissionId);
+                permissionItemIdSet.add(permissionItemId);
+            }
 
-                Map<Long, PermissionItem> allPermissionItemMap = new HashMap<Long, PermissionItem>();
-                Map<Long, List<PermissionItem>> permissionItemListMap = new HashMap<Long, List<PermissionItem>>();
+            for (Long permissionId : permissionIdList) {
+                RolePermission rolePermission = new RolePermission();
+                rolePermission.setRoleId(role.getId());
+                rolePermission.setPermissionId(permissionId);
 
-                // 转置map
-                if (allPermissionItemList != null) {
-                    for (PermissionItem permissionItem : allPermissionItemList) {
-                        allPermissionItemMap.put(permissionItem.getId(), permissionItem);
+                if (permissionItemIdList != null) {
+                    Set<Long> permissionItemIdSet = permissionIdAndPermissionItemIdSetMap.get(permissionId);
 
-                        Long permissionId = permissionItem.getPermissionId();
-                        List<PermissionItem> permissionItemList;
-                        if (permissionItemListMap.containsKey(permissionId)) {
-                            permissionItemList = permissionItemListMap.get(permissionId);
-                        } else {
-                            permissionItemList = new ArrayList<PermissionItem>();
-                            permissionItemListMap.put(permissionId, permissionItemList);
+                    List<Long> idList = new ArrayList<Long>();
+                    for (Long permissionItemId : permissionItemIdList) {
+                        if (permissionItemIdSet.contains(permissionItemId)) {
+                            idList.add(permissionItemId);
                         }
-                        permissionItemList.add(permissionItem);
                     }
+
+                    rolePermission.setPermissionItemIds(StringUtils.join(idList, ","));
                 }
 
-				for (Long permissionID:permissions) {
-					Permission perm = allPermissionMap.get(permissionID);
+                rolePermissionList.add(rolePermission);
+            }
+        }
+        try {
+            roleService.saveOrUpdate(role, rolePermissionList);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            super.setErrorMessage(e.getMessage());
+            return "failure";
+        }
 
-					RolePermission rp = new RolePermission();
-					rp.setRoleId(role.getId());
-					rp.setPermissionId(perm.getId());
-					StringBuffer strPermissionItems = new StringBuffer("");
-					List<String> list = new ArrayList<String>();
-					boolean flag = false;
-					if (permissionsItem != null && permissionsItem.size() != 0) {
-						List<PermissionItem> pits = permissionItemListMap.get(permissionID);
-						if (pits != null && pits.size() != 0) {
-                            for (Long permissionItemID : permissionsItem) {
-                                for (PermissionItem p : pits) {
-                                    if (p.getId().toString().equals(permissionItemID.toString())) {
-                                        flag = true;
-                                        list.add(permissionItemID.toString());
-                                        PermissionItem permItem = allPermissionItemMap.get(permissionItemID);
-                                        permItemList.add(permItem);
-                                        strPermissionItems.append(permissionItemID).append(",");
-                                    }
-                                }
-                            }
-							if (flag) {
-								if (strPermissionItems.lastIndexOf(",") != -1) {
-									strPermissionItems.deleteCharAt(strPermissionItems.lastIndexOf(","));
-								}
-								rp.setPermissionItemIds(strPermissionItems.toString());
-							}
-						}
-					}
-					rolePermList.add(rp);
-					//perm.setPermissionItemStr(list);
-					permList.add(perm);
-				}
-			}
-			try {
-				permissionService.manage(role,rolePermList);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				super.setErrorMessage(e.getMessage());
-				return "failure";
-			}
-			//如果admin修改，其他角色的role，会导致admin的权限错误,如果修改的是自己的权限就更新session，如果修改的为其他角色则不更新
-			UserSessionBean userSessionBean = (UserSessionBean)super.getSession().get(Global.USER_SESSION);
-            /*
-			if (userSessionBean != null && role.getId() != null && userSessionBean.getRole().getId().longValue() == role.getId().longValue()) {
-				userSessionBean.setRole(role);
-				userSessionBean.setPermissionList(permList);
-				userSessionBean.setPermissionItems(permItemList);
-			}
-			*/
-		} else {
-			logger.error("添加角色错误，提交表单为空");
-			super.setErrorMessage("添加角色错误，提交表单不能为空");
-			return "failure";
-		}
-		super.setForwardUrl("/user/role.do");
-		super.setSuccessMessage("编辑角色成功");
-		logger.info("更新角色信息结束");
-		return "success";
-	}
-	
-	/**
-	 * 转向添加/修改角色
-	 */
-	public String input() {
-		logger.info("进入输入角色信息");
-		if (role != null) {
-			if (role.getId() != null) {
-				if ("copy".equals(func)) {//复制
-					role.setValid(true);//设置有效
-					role.setRestriction(true);//设置限制IP
-				} else {//修改
-					role = roleService.findById(role.getId());
-				}
-			}
-		} else {
-			role = new Role();
-			role.setRestriction(false);
-			role.setValid(true);
-		}
-		return "inputForm";
-	}
-	
-	public String view() {
-		logger.info("进入查看角色详情");
-		if (role != null && role.getId() != null) {
-			role = roleService.findById(role.getId());
-		} else {
+        super.setForwardUrl("/user/role.do");
+        super.setSuccessMessage("编辑角色成功");
+        logger.info("更新角色信息结束");
+        return SUCCESS;
+    }
+
+    /**
+     * 转向添加/修改角色
+     */
+    public String input() {
+        logger.info("进入输入角色信息");
+        if (role != null) {
+            if (role.getId() != null) {
+                if ("copy".equals(func)) {//复制
+                    role.setValid(true);//设置有效
+                    role.setRestriction(true);//设置限制IP
+                } else {//修改
+                    role = roleService.findById(role.getId());
+                }
+            }
+        } else {
+            role = new Role();
+            role.setRestriction(false);
+            role.setValid(true);
+        }
+        return "inputForm";
+    }
+
+    public String view() {
+        logger.info("进入查看角色详情");
+        if (role != null && role.getId() != null) {
+            role = roleService.findById(role.getId());
+        } else {
             this.errorForward(INDEX, "查看角色详情，编码不能为空");
-		}
-		logger.info("查看角色详情结束");
-		return VIEW;
-	}
-	
-	public String del() {
-		logger.info("进入删除角色");
-		if (role != null && role.getId() != null) {
-			roleService.delete(role.getId());
-		} else {
-            this.errorForward(INDEX, "删除角色，编码不能为空");
-		}
-		super.setForwardUrl("/user/role.do");
-		logger.info("删除角色结束");
-		return FORWARD;
-	}
-	
-	public void findPermissions() {
-		logger.info("进入查询权限");
-		HttpServletResponse response = ServletActionContext.getResponse();
-		List<String> perms = new ArrayList<String>();
-		List<String> permsItem = new ArrayList<String>();
-		StringBuffer strPermissionItems = new StringBuffer("");
-		if (role != null && role.getId() != null) {
-			List<RolePermission> rps = rolePermissionService.findByRoleId(role.getId());
+        }
+        logger.info("查看角色详情结束");
+        return VIEW;
+    }
 
-			for(int i = 0; i < rps.size(); i++){
-				perms.add(String.valueOf(rps.get(i).getPermissionId()));
-				String permissionItemIds = rps.get(i).getPermissionItemIds();
-				if(!StringUtils.isEmpty(permissionItemIds)){
-					strPermissionItems.append(permissionItemIds).append(",");
-				}
-			}
-			if (strPermissionItems.lastIndexOf(",") != -1) {						
-				strPermissionItems.deleteCharAt(strPermissionItems.lastIndexOf(","));
-			}
-			if(!StringUtils.isEmpty(strPermissionItems.toString())){
-				String[] arrPermsItem = StringUtils.split(strPermissionItems.toString(), ',');
-				for(String pi : arrPermsItem){
-					permsItem.add(pi);
-				}
-			}
-		}
+    public String del() {
+        logger.info("进入删除角色");
+        if (role != null && role.getId() != null) {
+            roleService.delete(role.getId());
+        } else {
+            this.errorForward(INDEX, "删除角色，编码不能为空");
+        }
+        super.setForwardUrl("/user/role.do");
+        logger.info("删除角色结束");
+        return FORWARD;
+    }
+
+    public void findPermissions() {
+        logger.info("进入查询权限");
+
+        // 获取当前角色已拥有的权限和子权限
+        Set<Long> rolePermissionIdSet = new HashSet<Long>();
+        Set<Long> rolePermissionItemIdSet = new HashSet<Long>();
+        if (role != null && role.getId() != null) {
+            List<RolePermission> rolePermissionList = rolePermissionService.findByRoleId(role.getId());
+
+            for (RolePermission rolePermission : rolePermissionList) {
+                rolePermissionIdSet.add(rolePermission.getPermissionId());
+
+                if (StringUtils.isNotBlank(rolePermission.getPermissionItemIds())) {
+                    String[] ids = StringUtils.split(rolePermission.getPermissionItemIds(), ",");
+                    for (String id : ids) {
+                        rolePermissionItemIdSet.add(Long.valueOf(id));
+                    }
+                }
+            }
+        }
 
         // 一次性读出所有权限
         List<Permission> allPermissionList = permissionService.findByExample(null, null);
@@ -276,94 +209,81 @@ public class RoleAction extends BaseAction {
             }
         }
 
-		List<TreeViewBean> list = new ArrayList<TreeViewBean>();
-		List<Menu> menuList = menuService.findByExample(null, null);
+        List<TreeViewBean> menuTreeViewBeanList = new ArrayList<TreeViewBean>();
+        List<Menu> menuList = menuService.findByExample(null, null);
 
-		if (menuList != null) {
-			for (Menu menu: menuList) {
-				TreeViewBean treeViewBean = new TreeViewBean();
-				treeViewBean.setId(menu.getId().toString());
-				treeViewBean.setText(menu.getName());
-				treeViewBean.setHasChildren(false);
-				treeViewBean.setClasses("");
-				
-				List<TreeViewBean> list2 = new ArrayList<TreeViewBean>();
-				List<Permission> permissionList = menuPermissionListMap.get(menu.getId());
+        if (menuList != null) {
+            for (Menu menu : menuList) {
+                TreeViewBean menuTreeViewBean = new TreeViewBean();
+                menuTreeViewBean.setId(menu.getId().toString());
+                menuTreeViewBean.setText(menu.getName());
+                menuTreeViewBean.setHasChildren(false);
+                menuTreeViewBean.setClasses(StringUtils.EMPTY);
 
-				if (permissionList != null) {
-					for (Permission permission: permissionList) {
-						TreeViewBean treeViewBean2 = new TreeViewBean();
-						treeViewBean2.setId(permission.getId().toString());
-						if (perms != null) {
-							boolean permsFlag = false;
-							for(String permID:perms) {
-								if (permission.getId().toString().equals(permID)) {
-									treeViewBean2.setText("<input type='checkbox' name='permissions' value='"+ permission.getId().toString() +"' checked='checked' class='perms'>&nbsp;" + permission.getName());
-									permsFlag = true;
-									break;
-								}
-							}
-							if (!permsFlag) {
-								treeViewBean2.setText("<input type='checkbox' name='permissions' value='"+ permission.getId().toString() +"' class='perms'>&nbsp;" + permission.getName());
-							}
-						} else {				
-							treeViewBean2.setText("<input type='checkbox' name='permissions' value='"+ permission.getId().toString() +"' class='perms'>&nbsp;" + permission.getName());
-						}
-						treeViewBean2.setHasChildren(false);
-						treeViewBean2.setClasses("");
-						
-						List<TreeViewBean> list3 = new ArrayList<TreeViewBean>();
-						Permission _queryPermission = new Permission();
-						_queryPermission.setId(permission.getId());
+                List<TreeViewBean> permissionTreeViewBeanList = new ArrayList<TreeViewBean>();
+                List<Permission> menuPermissionList = menuPermissionListMap.get(menu.getId());
 
-						List<PermissionItem> permissionItems = permissionItemListMap.get(permission.getId());
+                if (menuPermissionList != null) {
+                    for (Permission permission : menuPermissionList) {
+                        TreeViewBean permissionTreeViewBean = new TreeViewBean();
+                        permissionTreeViewBean.setId(permission.getId().toString());
+                        permissionTreeViewBean.setHasChildren(false);
+                        permissionTreeViewBean.setClasses("");
 
-						if (permissionItems != null) {
-							for(PermissionItem permissionItem: permissionItems) {
-								TreeViewBean treeViewBean3 = new TreeViewBean();
-								treeViewBean3.setId(permissionItem.getId().toString());
-								if (permsItem != null) {
-									boolean permsItemFlag = false;
-									for(String permItemID:permsItem) {
-										if (permissionItem.getId().toString().equals(permItemID)) {
-											treeViewBean3.setText("<input type='checkbox' name='permissionsItem' value='"+ permissionItem.getId().toString() +"' checked='checked' class='perms'>&nbsp;" + permissionItem.getName());
-											permsItemFlag = true;
-											break;
-										}
-									}
-									if (!permsItemFlag) {
-										treeViewBean3.setText("<input type='checkbox' name='permissionsItem' value='"+ permissionItem.getId().toString() +"' class='perms'>&nbsp;" + permissionItem.getName());
-									}
-								} else {						
-									treeViewBean3.setText("<input type='checkbox' name='permissionsItem' value='"+ permissionItem.getId().toString() +"' class='perms'>&nbsp;" + permissionItem.getName());
-								}
-								treeViewBean3.setHasChildren(false);
-								treeViewBean3.setClasses("");
-								list3.add(treeViewBean3);
-							}
-						}
-						
-						if (list3.size() == 0) {
-							list3 = null;
-						}
-						treeViewBean2.setChildren(list3);
-						list2.add(treeViewBean2);
-					}
-				}
-				treeViewBean.setChildren(list2);
-				list.add(treeViewBean);
-			}
-		}
-		JSONArray ja = JSONArray.fromObject(list);
-		super.writeRs(response, ja);
-	}
-	
-	public Role getRole() {
-		return role;
-	}
-	public void setRole(Role role) {
-		this.role = role;
-	}
+                        StringBuffer permissionNodeBuffer = new StringBuffer();
+                        permissionNodeBuffer.append("<input type='checkbox' name='permissionIdList' value='").append(permission.getId()).append("' class='perms'");
+                        if (rolePermissionIdSet.contains(permission.getId())) {
+                            permissionNodeBuffer.append(" checked='checked'");
+                        }
+                        permissionNodeBuffer.append("/>&nbsp;").append(permission.getName());
+
+                        permissionTreeViewBean.setText(permissionNodeBuffer.toString());
+
+                        List<TreeViewBean> permissionItemTreeViewBeanList = new ArrayList<TreeViewBean>();
+
+                        List<PermissionItem> permissionItemList = permissionItemListMap.get(permission.getId());
+
+                        if (permissionItemList != null) {
+                            for (PermissionItem permissionItem : permissionItemList) {
+                                TreeViewBean permissionItemTreeViewBean = new TreeViewBean();
+                                permissionItemTreeViewBean.setId(permissionItem.getId().toString());
+                                permissionItemTreeViewBean.setHasChildren(false);
+                                permissionItemTreeViewBean.setClasses("");
+
+                                StringBuffer permissionItemNodeBuffer = new StringBuffer();
+                                permissionItemNodeBuffer.append("<input type='checkbox' name='permissionItemIdList' value='").append(permissionItem.getId()).append("' class='perms'");
+                                if (rolePermissionItemIdSet.contains(permissionItem.getId())) {
+                                    permissionItemNodeBuffer.append(" checked='checked'");
+                                }
+                                permissionItemNodeBuffer.append("/>&nbsp;").append(permissionItem.getName());
+
+                                permissionItemTreeViewBean.setText(permissionItemNodeBuffer.toString());
+
+                                permissionItemTreeViewBeanList.add(permissionItemTreeViewBean);
+                            }
+                        }
+
+                        if (!permissionItemTreeViewBeanList.isEmpty()) {
+                            permissionTreeViewBean.setChildren(permissionItemTreeViewBeanList);
+                        }
+                        permissionTreeViewBeanList.add(permissionTreeViewBean);
+                    }
+                }
+                menuTreeViewBean.setChildren(permissionTreeViewBeanList);
+                menuTreeViewBeanList.add(menuTreeViewBean);
+            }
+        }
+
+        super.writeRs(ServletActionContext.getResponse(), JSONArray.fromObject(menuTreeViewBeanList));
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public List<Role> getRoleList() {
         return roleList;
@@ -374,30 +294,36 @@ public class RoleAction extends BaseAction {
     }
 
     public PermissionService getPermissionService() {
-		return permissionService;
-	}
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-	public String getFunc() {
-		return func;
-	}
-	public void setFunc(String func) {
-		this.func = func;
-	}
+        return permissionService;
+    }
 
-	public List<Long> getPermissions() {
-		return permissions;
-	}
-	public void setPermissions(List<Long> permissions) {
-		this.permissions = permissions;
-	}
-	public List<Long> getPermissionsItem() {
-		return permissionsItem;
-	}
-	public void setPermissionsItem(List<Long> permissionsItem) {
-		this.permissionsItem = permissionsItem;
-	}
+    public void setPermissionService(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
+
+    public String getFunc() {
+        return func;
+    }
+
+    public void setFunc(String func) {
+        this.func = func;
+    }
+
+    public List<Long> getPermissionIdList() {
+        return permissionIdList;
+    }
+
+    public void setPermissionIdList(List<Long> permissionIdList) {
+        this.permissionIdList = permissionIdList;
+    }
+
+    public List<Long> getPermissionItemIdList() {
+        return permissionItemIdList;
+    }
+
+    public void setPermissionItemIdList(List<Long> permissionItemIdList) {
+        this.permissionItemIdList = permissionItemIdList;
+    }
 
     public void setRoleService(RoleService roleService) {
         this.roleService = roleService;

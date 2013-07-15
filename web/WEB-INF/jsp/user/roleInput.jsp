@@ -101,7 +101,7 @@
                     <label class="control-label">选择权限</label>
 
                     <div class="controls">
-                        <ul id="showbodyul"></ul>
+                        <ul id="permissionTreeView"></ul>
                     </div>
                 </div>
                 <div class="control-group">
@@ -139,7 +139,7 @@
             permissionUrl += '&role.id=' + roleid;
         }
 
-        $('#showbodyul').treeview({
+        $('#permissionTreeView').treeview({
             'collapsed': false,
             'unique': false,
             'url': permissionUrl,

@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface PermissionService extends BaseService<Permission> {
 
-    public void manage(Role role, List<RolePermission> rolePermissions);
-	
 	void manage(User user);
 	/**
 	 * 封装多条件查询分页信息

@@ -33,6 +33,7 @@ public class BaseAction extends ActionSupport implements SessionAware {
     protected final static String MAIN = "main";
     protected final static String LIST = "list";
     protected final static String VIEW = "view";
+    protected final static String FAILURE = "failure";
 
     private String action = HANDLE;
     private String forwardUrl = "";
