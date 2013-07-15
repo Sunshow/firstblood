@@ -620,7 +620,5 @@ public class CoreHttpUtils {
 		params.put("中文参数", "中文");
 		
 		System.out.println(getQueryString(params, "UTF-8"));
-		
-		System.out.println(encodeURI("http://a.dev.lehecai.cn/user/plan_prize_ranking.php?json={\"page\":1,\"pagesize\":10,\"where\":[{\"key\":\"lottery_type\",\"op\":\"=\",\"val\":[30,31,32,33,34]},{\"key\":\"ticket_print_time_start\",\"val\":\"2011-01-01 00:00:00\"},{\"key\":\"ticket_print_time_end\",\"val\":\"2011-09-01 23:59:59\"}]}", "UTF-8"));
 	}
 }

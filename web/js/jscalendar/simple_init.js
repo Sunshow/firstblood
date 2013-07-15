@@ -1,5 +1,4 @@
 /*
- * Copyright: http://www.lehecai.com | 2010-10-29
  * Example: <input class="calendarInit" type="text" id="dogdate" readonly="readonly" />
  * Required_Attr: class="calendarInit" id="XXX"
  */

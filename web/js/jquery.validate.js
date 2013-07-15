@@ -1015,7 +1015,7 @@ $.extend($.validator, {
 			return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(value);
 		},
 	
-		// New Method For www.lehecai.com
+		// New Method For float
 		numFloat: function(value, element) {
 			return this.optional(element) || /^([1-9]\d*(\.\d+)?|0(\.\d+)?)$/.test(value);
 		},
