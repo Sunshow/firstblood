@@ -112,7 +112,7 @@ public class RoleAction extends BaseAction {
             if (role.getId() != null) {
                 if ("copy".equals(func)) {//复制
                     role.setValid(true);//设置有效
-                    role.setRestriction(true);//设置限制IP
+                    role.setRestriction(false);//设置限制IP
                 } else {//修改
                     role = roleService.findById(role.getId());
                 }
