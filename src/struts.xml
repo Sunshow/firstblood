@@ -31,7 +31,6 @@
             <result name="success">/WEB-INF/jsp/success.jsp</result>
             <result name="failure">/WEB-INF/jsp/failure.jsp</result>
             <result name="unauthorized">/WEB-INF/jsp/unauthorized.jsp</result>
-            <result name="index">/parentDirect.jsp</result>
             <result name="input">/WEB-INF/jsp/paramsError.jsp</result>
         </global-results>
     </package>
