@@ -3,7 +3,7 @@ firstblood
 
 ##环境准备
 
-MySQL安装，并创建一个数据库，并将bjgl.properties中的对应配置修改
+MySQL安装，创建一个数据库，并修改bjgl.properties中的对应配置
 
 
 ##初始化数据库

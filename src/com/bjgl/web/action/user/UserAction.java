@@ -1,401 +1,319 @@
 package com.bjgl.web.action.user;
 
 import com.bjgl.web.action.BaseAction;
-import com.bjgl.web.bean.PageBean;
 import com.bjgl.web.entity.user.Role;
 import com.bjgl.web.entity.user.User;
 import com.bjgl.web.entity.user.UserRole;
-import com.bjgl.web.service.user.PermissionService;
 import com.bjgl.web.service.user.RoleService;
 import com.bjgl.web.service.user.UserRoleService;
 import com.bjgl.web.service.user.UserService;
 import com.bjgl.web.utils.CharsetConstant;
-import com.bjgl.web.utils.CoreDateUtils;
 import com.bjgl.web.utils.CoreStringUtils;
 import com.bjgl.web.utils.PageUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class UserAction extends BaseAction {
-	private static final long serialVersionUID = 2436161530465382824L;
+    private static final long serialVersionUID = 2436161530465382824L;
 
     private UserService userService;
     private RoleService roleService;
     private UserRoleService userRoleService;
 
-	private PermissionService permissionService;
-	private static final String NEED_MODIFY_PASSWORD = "1";
-	
-	private User user;
-	private Role role;
-	
-	private String checkValid;
-	private String conPassword;
-	private String pwdFlag;
-	
-	private List<User> users;
-	private List<Role> roles;
-	
-	private String userName;
-	private String name;
-	private Date beginDate;
-	private Date endDate;
-	private Long roleID;
-	private String valid;
-	
-	/**
-	 * 多条件分页查询所有用户
-	 * @return
-	 */
-	public String handle() {
-		logger.info("进入查询用户");
-		roles = roleService.findByExample(null, null);//查询所有角色
-		if (roles == null || roles.size() == 0) {
-			logger.info("查询用户，暂无角色");
-		}
-		return "list";
-	}
-	
-	public String query() {
-		logger.info("进入查询用户");
-		HttpServletRequest request = ServletActionContext.getRequest();
-		String endDateStr = CoreDateUtils.formatDate(endDate);
-		endDateStr = endDateStr + " 23:59:59";
-		try {
-			users = permissionService.list(userName, name, beginDate, CoreDateUtils.parseLongDate(endDateStr),
-					roleID, valid, super.getPageBean());//多条件分页查询用户
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			super.setErrorMessage(e.getMessage());
-			return "failure";
-		}//多条件分页查询用户
-		PageBean pageBean = null;
-		try {
-			pageBean = permissionService.getPageBean(userName, name, beginDate, endDate, 
-					 roleID, checkValid, super.getPageBean());//封装多条件查询分页信息
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			super.setErrorMessage(e.getMessage());
-			return "failure";
-		}//封装多条件查询分页信息
-		super.setPageString(PageUtil.getPageString(request, pageBean));
-		
-		try {
-			roles = roleService.findByExample(null, null);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			super.setErrorMessage(e.getMessage());
-			return "failure";
-		}//查询所有角色
-		if (roles == null || roles.size() == 0) {
-			logger.info("查询用户，暂无角色");
-		}
-		
-		logger.info("查询用户结束");
-		return "list";
-		
-	}
-	
-	public String manage() {
-		logger.info("进入更新用户信息");
-		if (user != null) {
-			if (user.getName() == null || "".equals(user.getName())) {
-				logger.error("添加用户，用户姓名为空");
-				super.setErrorMessage("用户姓名不能为空");
-				return "failure";
-			}
-			User pUser = null;
-			UserRole ur = null;
-			if (user.getId() != null ) {//修改
-				if (!StringUtils.isEmpty(pwdFlag)) {
-					try {
-						pUser = userService.findById(user.getId());
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-						super.setErrorMessage(e.getMessage());
-						return "failure";
-					}
-					if (NEED_MODIFY_PASSWORD.equals(pwdFlag)) {//需要修改密码
-						if (user.getPassword() == null || "".equals(user.getPassword())) {
-							logger.error("密码为空");
-							super.setErrorMessage("密码不能为空");
-							return "failure";
-						}
-						if (conPassword == null || "".equals(conPassword)) {
-							logger.error("确认密码为空");
-							super.setErrorMessage("确认密码不能为空");
-							return "failure";
-						}
-						if (!(user.getPassword()).equals(conPassword)) {
-							logger.error("两次密码输入不一致");
-							super.setErrorMessage("两次密码输入不一致");
-							return "failure";
-						}
-						pUser.setPassword(CoreStringUtils.md5(user.getPassword(), CharsetConstant.CHARSET_UTF8));
-					}
-					if (checkValid != null && "on".equals(checkValid)) {
-						pUser.setValid(true);
-					}else{
-						pUser.setValid(false);
-					}
-					pUser.setUpdateTime(new Date());
-					pUser.setTel(user.getTel());
-					pUser.setEmail(user.getEmail());
-				} else {
-					logger.error("传递pwdFlag参数错误");
-					super.setErrorMessage("传递pwdFlag参数错误");
-					return "failure";
-				}
-				try {
-					List<UserRole> userRoleList = userRoleService.findByUserId(pUser.getId());
-					if(userRoleList!=null && userRoleList.size() > 0){
-						ur = userRoleList.get(0);
-					}
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-					super.setErrorMessage(e.getMessage());
-					return "failure";
-				}
-			} else {//添加
-				if (user.getUsername() == null || "".equals(user.getUsername())) {
-					logger.error("用户名为空");
-					super.setErrorMessage("用户名不能为空");
-					return "failure";
-				} else {
-					User sUser = null;
-					try {
-						sUser = userService.findByUsername(user.getUsername());
-					} catch (Exception e) {
-						logger.error(e.getMessage());
-						super.setErrorMessage(e.getMessage());
-						return "failure";
-					}
-					if (sUser != null && sUser.getId() != null) {
-						logger.error("用户名已被使用");
-						super.setErrorMessage("用户名已被使用");
-						return "failure";
-					}
-				}
-				if (StringUtils.isEmpty(user.getPassword())) {
-					logger.error("密码为空");
-					super.setErrorMessage("密码不能为空");
-					return "failure";
-				}
-				if (StringUtils.isEmpty(conPassword)) {
-					logger.error("确认密码为空");
-					super.setErrorMessage("确认密码不能为空");
-					return "failure";
-				}
-				if (!(user.getPassword()).equals(conPassword)) {
-					logger.error("两次密码输入不一致");
-					super.setErrorMessage("两次密码输入不一致");
-					return "failure";
-				}
-				user.setPassword(CoreStringUtils.md5(user.getPassword(), CharsetConstant.CHARSET_UTF8));
-				user.setCreateTime(new Date());
-				user.setUpdateTime(new Date());
-				if (checkValid != null && "on".equals(checkValid)) {
-					user.setValid(true);
-				}
-				pUser = user;
-			}
-			if(ur == null){
-				ur = new UserRole();
-			}
-			try {
-				permissionService.manage(pUser,ur);
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				super.setErrorMessage(e.getMessage());
-				return "failure";
-			}
-		} else {
-			logger.error("添加用户错误，提交表单为空");
-			super.setErrorMessage("添加用户错误，提交表单不能为空");
-			return "failure";
-		}
-		super.setSuccessMessage("更新成功");
-		super.setForwardUrl("/user/user.do");
-		logger.info("更新用户信息结束");
-		return "success";
-	}
-	
-	/**
-	 * 转向添加/修改用户
-	 */
-	public String input() {
-		if (user != null && user.getId() != null) {
-			try {
-				user = userService.findById(user.getId());
-				List<UserRole> urList = userRoleService.findByUserId(user.getId());
-				if(urList != null && urList.size() > 0){
-					UserRole ur = urList.get(0);
-					Role role = new Role();
-					role.setId(ur.getRoleId());
-					//user.setRole(role);
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-				super.setErrorMessage(e.getMessage());
-				return "failure";
-			}
-		}
-		try {
-			roles = roleService.findByExample(role, null);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			super.setErrorMessage(e.getMessage());
-			return "failure";
-		}
-		if (user != null && user.getId() != null) {
-			if (user.getValid()) {
-				checkValid = "on";
-			}
-		}
-		return "inputForm";
-	}
-	
-	public String view() {
-		logger.info("进入查看用户详情");
-		if (user != null && user.getId() != null) {
-			user = userService.findById(user.getId());
-			//role = roleService.findById(user.getRoleID());
-		} else {
-			logger.error("查看用户详情，编码为空");
-			super.setErrorMessage("查看用户详情，编码为空");
-			return "failure";
-		}
-		logger.info("查看用户详情结束");
-		return "view";
-	}
-	
-	public String del() {
-		logger.info("进入删除用户");
-		if (user != null && user.getId() != null) {
-            userService.delete(user.getId());
-		} else {
-			logger.error("删除用户，编码为空");
-			super.setErrorMessage("删除用户，编码不能为空");
-			return "failure";
-		}
-		super.setForwardUrl("/user/user.do");
-		logger.info("删除用户结束");
-		return "forward";
-	}
-	
-	public void check() {
-		logger.info("进入检验用户名是否存在");
-		HttpServletResponse response = ServletActionContext.getResponse();
-		boolean flag = true;
-		User sUser = userService.findByUsername(user.getUsername());
-		if (sUser != null && sUser.getId() != null) {
-			flag = false;
-		}
-		PrintWriter out = null;
-		response.setContentType("text/html; charset=utf-8");
-		try {
-			out = response.getWriter();
-			out.print(flag);
-			out.flush();
-			out.close();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-		}
-	}
-	
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
-	public List<User> getUsers() {
-		return users;
-	}
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
-	public String getCheckValid() {
-		return checkValid;
-	}
-	public void setCheckValid(String checkValid) {
-		this.checkValid = checkValid;
-	}
-	public String getConPassword() {
-		return conPassword;
-	}
-	public void setConPassword(String conPassword) {
-		this.conPassword = conPassword;
-	}
-	public String getPwdFlag() {
-		return pwdFlag;
-	}
-	public void setPwdFlag(String pwdFlag) {
-		this.pwdFlag = pwdFlag;
-	}
-	public List<Role> getRoles() {
-		return roles;
-	}
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public Date getBeginDate() {
-		return beginDate;
-	}
-	public void setBeginDate(Date beginDate) {
-		this.beginDate = beginDate;
-	}
-	public Date getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-	public Long getRoleID() {
-		return roleID;
-	}
-	public void setRoleID(Long roleID) {
-		this.roleID = roleID;
-	}
-	public String getValid() {
-		return valid;
-	}
-	public void setValid(String valid) {
-		this.valid = valid;
-	}
-	public Role getRole() {
-		return role;
-	}
-	public void setRole(Role role) {
-		this.role = role;
-	}
+    private User user;
+    private Role role;
 
-	public PermissionService getPermissionService() {
-		return permissionService;
-	}
+    private Long roleId;
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
+    private String confirmPassword;
+
+    private List<User> userList;
+    private List<Role> roleList;
+
+    private String username;
+    private String name;
+    private String phone;
+    private Date beginDate;
+    private Date endDate;
+
+    private Integer validValue;
+
+    /**
+     * 多条件分页查询所有用户
+     *
+     * @return
+     */
+    public String handle() {
+        logger.info("进入查询用户");
+        return "list";
+    }
+
+    public String query() {
+        logger.info("进入查询用户");
+        HttpServletRequest request = ServletActionContext.getRequest();
+
+        List<Criterion> criterionList = new ArrayList<Criterion>();
+
+        if (StringUtils.isNotBlank(this.getUsername())) {
+            criterionList.add(Restrictions.like("username", "%" + StringUtils.trim(this.getUsername()) + "%"));
+        }
+        if (StringUtils.isNotBlank(this.getName())) {
+            criterionList.add(Restrictions.like("name", "%" + StringUtils.trim(this.getName()) + "%"));
+        }
+        if (StringUtils.isNotBlank(this.getPhone())) {
+            criterionList.add(Restrictions.like("tel", "%" + StringUtils.trim(this.getPhone()) + "%"));
+        }
+
+        if (this.getValidValue() != null && this.getValidValue() >= 0) {
+            criterionList.add(Restrictions.eq("valid", this.getValidValue() > 0));
+        }
+
+        if (beginDate != null) {
+            criterionList.add(Restrictions.ge("createTime", beginDate));
+        }
+        if (endDate != null) {
+            criterionList.add(Restrictions.le("createTime", endDate));
+        }
+
+        userList = userService.findByExample(null, criterionList, this.getPageBean(), Order.asc("id"));
+
+        this.setPageString(PageUtil.getPageString(request, userService.getPageBean(null, criterionList, this.getPageBean())));
+
+        logger.info("查询用户结束");
+        return "list";
+
+    }
+
+    public String manage() {
+        logger.info("进入更新用户信息");
+
+        if (user == null) {
+            this.errorForward(FAILURE, "非法请求");
+        }
+
+        this.emptyCheck(user.getUsername(), FAILURE, "用户名不能为空");
+        this.emptyCheck(user.getName(), FAILURE, "用户姓名不能为空");
+        this.emptyCheck(this.getRoleId(), FAILURE, "所属角色不能为空");
+
+        if (user.getId() == null) {
+            // 新用户需要判断密码输入是否匹配
+            this.emptyCheck(user.getPassword(), FAILURE, "密码不能为空");
+            this.emptyCheck(this.getConfirmPassword(), FAILURE, "请确认密码");
+
+            if (!user.getPassword().equals(this.getConfirmPassword())) {
+                this.errorForward(FAILURE, "两次密码输入不一致");
+            }
+
+            // 确认用户名不重复
+            if (userService.findByUsername(user.getUsername()) != null) {
+                this.errorForward(FAILURE, "用户名已存在");
+            }
+
+            // 通过检验，开始添加用户
+            user.setPassword(CoreStringUtils.md5(user.getPassword(), CharsetConstant.CHARSET_UTF8));
+            user.setCreateTime(new Date());
+            user.setUpdateTime(user.getCreateTime());
+
+            UserRole userRole = new UserRole();
+            userRole.setRoleId(this.getRoleId());
+
+            List<UserRole> userRoleList = new ArrayList<UserRole>();
+            userRoleList.add(userRole);
+
+            userService.saveOrUpdate(user, userRoleList);
+        } else {
+            User updateUser = userService.findById(user.getId());
+
+            // 是否设置了修改密码
+            if (StringUtils.isNotBlank(user.getPassword()) || StringUtils.isNotBlank(this.getConfirmPassword())) {
+                // 新用户需要判断密码输入是否匹配
+                this.emptyCheck(user.getPassword(), FAILURE, "密码不能为空");
+                this.emptyCheck(this.getConfirmPassword(), FAILURE, "请确认密码");
+
+                if (!user.getPassword().equals(this.getConfirmPassword())) {
+                    this.errorForward(FAILURE, "两次密码输入不一致");
+                }
+
+                // 设置密码
+                updateUser.setPassword(CoreStringUtils.md5(user.getPassword(), CharsetConstant.CHARSET_UTF8));
+            }
+
+            // 通过检验，开始修改用户
+            updateUser.setName(user.getName());
+            updateUser.setTel(user.getTel());
+            updateUser.setEmail(user.getEmail());
+            updateUser.setValid(user.getValid());
+            updateUser.setMemo(user.getMemo());
+
+            updateUser.setUpdateTime(new Date());
+
+            UserRole userRole = new UserRole();
+            userRole.setRoleId(this.getRoleId());
+
+            List<UserRole> userRoleList = new ArrayList<UserRole>();
+            userRoleList.add(userRole);
+
+            userService.saveOrUpdate(updateUser, userRoleList);
+        }
+
+        super.setSuccessMessage("更新成功");
+        super.setForwardUrl("/user/user.do");
+        logger.info("更新用户信息结束");
+        return "success";
+    }
+
+    /**
+     * 转向添加/修改用户
+     */
+    public String input() {
+        if (user == null) {
+            user = new User();
+        }
+        if (user.getId() != null) {
+            user = userService.findById(user.getId());
+
+            if (user == null) {
+                this.errorForward(FAILURE, "要编辑的用户不存在");
+            }
+
+            List<UserRole> userRoleList = userRoleService.findByUserId(user.getId());
+            if (userRoleList != null && !userRoleList.isEmpty()) {
+                // 取用户所属第一个角色
+                roleId = userRoleList.get(0).getRoleId();
+            }
+        }
+
+        // 查找可用的角色
+        Role example = new Role();
+        example.setValid(Boolean.TRUE);
+        roleList = roleService.findByExample(example, null);
+
+        return "inputForm";
+    }
+
+    public String view() {
+        logger.info("进入查看用户详情");
+
+        this.emptyCheck(user, FAILURE, "非法请求");
+        this.emptyCheck(user.getId(), FAILURE, "非法请求");
+
+        user = userService.findById(user.getId());
+        this.emptyCheck(user, FAILURE, "用户不存在");
+
+        List<UserRole> userRoleList = userRoleService.findByUserId(user.getId());
+        if (userRoleList != null && !userRoleList.isEmpty()) {
+            // 取用户所属第一个角色
+            roleId = userRoleList.get(0).getRoleId();
+            role = roleService.findById(roleId);
+        }
+
+        logger.info("查看用户详情结束");
+        return "view";
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Integer getValidValue() {
+        return validValue;
+    }
+
+    public void setValidValue(Integer validValue) {
+        this.validValue = validValue;
+    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
+    }
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public void setUserService(UserService userService) {
         this.userService = userService;

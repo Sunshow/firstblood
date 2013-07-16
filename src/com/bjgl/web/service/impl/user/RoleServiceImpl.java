@@ -26,29 +26,29 @@ public class RoleServiceImpl extends AbstractBaseServiceImpl<Role> implements Ro
     }
 
     @Override
-    public void saveOrUpdate(Role role, List<RolePermission> rolePermissions) {
+    public void saveOrUpdate(Role role, List<RolePermission> rolePermissionList) {
         // 先保存角色
         if (role.getId() == null) {
             this.getRoleDao().save(role);
         } else {
-            this.getRoleDao().update(role);
+            this.getRoleDao().merge(role);
         }
 
         // 先取出已有的角色权限
-        List<RolePermission> srcRolePermissions = rolePermissionDao.findByRoleId(role.getId());
+        List<RolePermission> srcRolePermissionList = rolePermissionDao.findByRoleId(role.getId());
 
         // 按照permission转置map
         Map<Long, RolePermission> srcRolePermissionMap = new HashMap<Long, RolePermission>();
-        if (srcRolePermissions != null) {
-            for (RolePermission rp : srcRolePermissions) {
+        if (srcRolePermissionList != null) {
+            for (RolePermission rp : srcRolePermissionList) {
                 srcRolePermissionMap.put(rp.getPermissionId(), rp);
             }
         }
 
         // 转置要修改成的数据
         Map<Long, RolePermission> desRolePermissionMap = new HashMap<Long, RolePermission>();
-        if (rolePermissions != null) {
-            for (RolePermission rp : rolePermissions) {
+        if (rolePermissionList != null) {
+            for (RolePermission rp : rolePermissionList) {
                 desRolePermissionMap.put(rp.getPermissionId(), rp);
             }
         }
@@ -58,8 +58,8 @@ public class RoleServiceImpl extends AbstractBaseServiceImpl<Role> implements Ro
         List<RolePermission> deleteRolePermissionList = new ArrayList<RolePermission>();
 
         // 查找出已被删除的权限
-        if (srcRolePermissions != null) {
-            for (RolePermission srcRolePermission : srcRolePermissions) {
+        if (srcRolePermissionList != null) {
+            for (RolePermission srcRolePermission : srcRolePermissionList) {
                 if (!desRolePermissionMap.containsKey(srcRolePermission.getPermissionId())) {
                     // 已被删除
                     deleteRolePermissionList.add(srcRolePermission);
@@ -93,8 +93,8 @@ public class RoleServiceImpl extends AbstractBaseServiceImpl<Role> implements Ro
         }
 
         // 查找出要新增的权限
-        if (rolePermissions != null) {
-            for (RolePermission desRolePermission : rolePermissions) {
+        if (rolePermissionList != null) {
+            for (RolePermission desRolePermission : rolePermissionList) {
                 if (!srcRolePermissionMap.containsKey(desRolePermission.getPermissionId())) {
                     // 不存在的权限，需要添加
                     if (desRolePermission.getRoleId() == null) {
@@ -107,12 +107,12 @@ public class RoleServiceImpl extends AbstractBaseServiceImpl<Role> implements Ro
 
         // 执行删除
         for (RolePermission rolePermission : deleteRolePermissionList) {
-            rolePermissionDao.delete(rolePermission);
+            rolePermissionDao.delete(rolePermission.getId());
         }
 
         // 执行保存和更新
         for (RolePermission rolePermission : mergeRolePermissionList) {
-            rolePermissionDao.save(rolePermission);
+            rolePermissionDao.merge(rolePermission);
         }
     }
 

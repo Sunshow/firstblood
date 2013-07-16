@@ -34,81 +34,109 @@
                 <a class="btn btn-primary" href="<c:url value="/user/user.do?action=input"/>">添加用户</a>
             </div>
 
-            <div>
-                <div class="pagediv">条件查询</div>
-                <div>
-                    <form id="theform" action="${ctx}/user/user.do" method="post">
-                        <input type="hidden" value="query" name="action"/>
-                        <table cellpadding="0" cellspacing="0" border="0" style="width:50%" class="querytab">
-                            <tr>
-                                <td>用户名:<input type="text" name="username" maxlength="16" value="${username}" /></td>
-                                <td>姓名:<input type="text" name="name" maxlength="16" value="${name}" /></td>
-                            </tr>
-                            <tr>
-                                <td>用户角色:
-                                    <s:select id="roleID" name="roleID" list="roles" listKey="id" listValue="name" headerKey="-1" headerValue="全部"></s:select>
-                                </td>
-                                <td>是否有效:
-                                    <select name="valid">
-                                        <c:choose>
-                                            <c:when test="${valid == 'false'}">
-                                                <option value="">全部</option>
-                                                <option value="true">有效</option>
-                                                <option value="false" selected="selected">无效</option>
-                                            </c:when>
-                                            <c:when test="${valid == 'true'}">
-                                                <option value="">全部</option>
-                                                <option value="true" selected="selected">有效</option>
-                                                <option value="false">无效</option>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <option value="" selected="selected">全部</option>
-                                                <option value="true">有效</option>
-                                                <option value="false">无效</option>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>创建时间:从<input type="text" id="beginDate" name="beginDate" size="10" value="<fmt:formatDate value='${beginDate}' pattern='yyyy-MM-dd'/>"/><input type="button" id="beginDateTrigger" value="选择"/></td>
-                                <td>至<input type="text" id="endDate" name="endDate" size="10" value="<fmt:formatDate value='${endDate}' pattern='yyyy-MM-dd'/>"/><input type="button" id="endDateTrigger" value="选择"/></td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"><input id="sub" type="submit" value="查询"/></td>
-                            </tr>
-                        </table>
-                    </form>
-                </div>
+            <div class="alert alert-info">
+                条件查询
             </div>
 
-            <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>角色名称</th>
-                    <th>是否有效</th>
-                    <th>是否限制IP</th>
-                    <th>有效IP段</th>
-                    <th>备注</th>
-                    <th colspan="2">操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <s:iterator value="roleList">
+            <form class="form-inline" action="${ctx}/user/user.do" method="post">
+                <input type="hidden" value="query" name="action"/>
+                <table class="table table-bordered">
                     <tr>
-                        <td>${id}</td>
-                        <td><a href="<c:url value="/user/role.do?action=view&role.id=${id}"/>">${name}</a></td>
-                        <td>${valid}</td>
-                        <td>${restriction}</td>
-                        <td>${restrictionIp}</td>
-                        <td>${memo}</td>
-                        <td><a href="<c:url value="/user/role.do?action=input&role.id=${id}"/>">修改</a></td>
-                        <td><a href="<c:url value="/user/role.do?action=input&func=copy&role.id=${id}"/>">复制</a></td>
+                        <td>
+                            <label>用户名</label>
+                            <input type="text" placeholder="用户名" name="username" value="${username}"/>
+                        </td>
+                        <td>
+                            <label>姓名</label>
+                            <input type="text" placeholder="姓名" name="name" value="${name}" />
+                        </td>
                     </tr>
-                </s:iterator>
-                </tbody>
-            </table>
+                    <tr>
+                        <td>
+                            <label>电话</label>
+                            <input type="text" placeholder="电话" name="phone" value="${phone}" />
+                        </td>
+                        <td>
+                            <label>是否有效</label>
+                            <select name="validValue">
+                                <c:choose>
+                                    <c:when test="${validValue == null || validValue < 0}">
+                                        <option value="-1">全部</option>
+                                        <option value="1">有效</option>
+                                        <option value="0">无效</option>
+                                    </c:when>
+                                    <c:when test="${validValue > 0}">
+                                        <option value="-1">全部</option>
+                                        <option value="1" selected="selected">有效</option>
+                                        <option value="0">无效</option>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <option value="-1">全部</option>
+                                        <option value="1">有效</option>
+                                        <option value="0" selected="selected">无效</option>
+                                    </c:otherwise>
+                                </c:choose>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>创建时间开始</label>
+                            <input type="text" id="beginDate" name="beginDate" value="<fmt:formatDate value='${beginDate}' pattern='yyyy-MM-dd HH:mm:ss'/>"/>
+                            <input type="button" id="beginDateTrigger" value="选择"/>
+                        </td>
+                        <td>
+                            <label>创建时间结束</label>
+                            <input type="text" id="endDate" name="endDate" size="10" value="<fmt:formatDate value='${endDate}' pattern='yyyy-MM-dd HH:mm:ss'/>"/>
+                            <input type="button" id="endDateTrigger" value="选择"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div style="text-align:center">
+                                <button class="btn btn-primary" type="submit">查询</button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>用户名</th>
+                        <th>姓名</th>
+                        <th>电话</th>
+                        <th>邮件</th>
+                        <th>角色</th>
+                        <th>最后登录</th>
+                        <td>是否有效</td>
+                        <th>备注</th>
+                        <th colspan="2">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <s:iterator value="userList">
+                        <tr>
+                            <td>${id}</td>
+                            <td><a href="<c:url value="/user/user.do?action=view&user.id=${id}"/>">${username}</a></td>
+                            <td>${name}</td>
+                            <td>${tel}</td>
+                            <td>${email}</td>
+                            <td>${role.name}</td>
+                            <td><s:date name="loginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
+                            <td><s:if test="valid == true">有效</s:if><s:else>无效</s:else></td>
+                            <td>${memo}</td>
+                            <td><a href="<c:url value="/user/user.do?action=input&user.id=${id}"/>">修改</a></td>
+                            <td><a href="<c:url value="/user/user.do?action=del&user.id=${id}"/>" onclick="return confirm('确实要删除吗？');">删除</a></td>
+                        </tr>
+                    </s:iterator>
+                    </tbody>
+                </table>
+
+                ${pageString}
+
+            </form>
         </div>
     </div>
 </div>
@@ -121,15 +149,21 @@
         Calendar.setup(
                 {
                     inputField  : "beginDate",    // ID of the input field
-                    ifFormat    : "%Y-%m-%d",   // the date format
-                    button      : "beginDateTrigger"      // ID of the button
+                    ifFormat    : "%Y-%m-%d %H:%M:%S",   // the date format
+                    button      : "beginDateTrigger",
+                    showsTime   : true,
+                    date		: Calendar.initNewDate(),
+                    timeFormat  : "24"
                 }
         );
         Calendar.setup(
                 {
                     inputField  : "endDate",    // ID of the input field
-                    ifFormat    : "%Y-%m-%d",   // the date format
-                    button      : "endDateTrigger"      // ID of the button
+                    ifFormat    : "%Y-%m-%d %H:%M:%S",   // the date format
+                    button      : "endDateTrigger",
+                    showsTime   : true,
+                    date		: Calendar.initNewDate(),
+                    timeFormat  : "24"
                 }
         );
     });
@@ -137,45 +171,3 @@
 
 </body>
 </html>
-
-
-
-  				<div>
-  					<div class="pagediv">结果列表</div>
-  					<div>
-  					<table cellpadding="0" cellspacing="0" border="0" class="querytab">
-			    		<tr class="font_bold">
-			    			<td>序号</td>
-			    			<td>编码</td>
-			    			<td>用户名</td>
-			    			<td>姓名</td>
-			    			<td>电话</td>
-			    			<td>邮件</td>
-			    			<td>角色</td>
-			    			<td>本次登录时间</td>
-			    			<td>上次登录时间</td>
-			    			<td>是否有效</td>
-			    			<td>备注</td>
-			    			<td colspan="2">操作</td>
-			    		</tr>
-			    		<s:iterator value="users" status="index">
-						<tr class="beover">
-			    			<td>${index.count}</td>
-			    			<td>${id}</td>
-			    			<td><a href="${ctx}/user/user.do?action=view&user.id=${id}">${username}</a></td>
-			    			<td>${name}</td>
-			    			<td>${tel}</td>
-			    			<td>${email}</td>
-			    			<td>${role.name}</td>
-			    			<td><s:date name="loginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
-			    			<td><s:date name="lastLoginTime" format="yyyy-MM-dd HH:mm:ss" /></td>
-			    			<td><s:if test="valid == true">有效</s:if><s:else>无效</s:else></td>
-			    			<td>${memo}</td>
-			    			<td><a href="${ctx}/user/user.do?action=input&user.id=${id}">修改</a></td>
-			    			<td><a href="${ctx}/user/user.do?action=del&user.id=${id}" onclick="return confirm('确实要删除吗？');">删除</a></td>
-			    		</tr>
-			    		</s:iterator>
-			    	</table>
-			    	</div>
-			    	<div class="pagediv"><center>${pageString}</center></div>
-  				</div>

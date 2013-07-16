@@ -1,6 +1,7 @@
 package com.bjgl.web.dao;
 
 import com.bjgl.web.bean.PageBean;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
 import java.io.Serializable;
@@ -18,6 +19,8 @@ public interface BaseDao<T> {
 
     public void update(T entity);
 
+    public void merge(T entity);
+
     public void delete(Serializable id);
 
     public T findById(Serializable id);
@@ -25,6 +28,10 @@ public interface BaseDao<T> {
     public PageBean getPageBean(T example, PageBean pageBean);
 
     public List<T> findByExample(T example, PageBean pageBean, Order... orders);
+
+    public PageBean getPageBean(T example, List<Criterion> criterionList, PageBean pageBean);
+
+    public List<T> findByExample(T example, List<Criterion> criterionList, PageBean pageBean, Order... orders);
 
     public List<T> findByHQL(String hql, PageBean pageBean, Object... params);
 }

@@ -12,5 +12,6 @@
         <property name="valid" not-null="true"/>
         <property name="restriction" not-null="true"/>
         <property name="restrictionIp" column="restriction_ip"/>
+        <property name="memo"/>
     </class>
 </hibernate-mapping>

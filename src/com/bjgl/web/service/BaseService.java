@@ -1,6 +1,7 @@
 package com.bjgl.web.service;
 
 import com.bjgl.web.bean.PageBean;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 
 import java.io.Serializable;
@@ -25,6 +26,10 @@ public interface BaseService<T> {
     public PageBean getPageBean(T example, PageBean pageBean);
 
     public List<T> findByExample(T example, PageBean pageBean, Order... orders);
+
+    public PageBean getPageBean(T example, List<Criterion> criterionList, PageBean pageBean);
+
+    public List<T> findByExample(T example, List<Criterion> criterionList, PageBean pageBean, Order... orders);
 
     public List<T> findByHQL(String hql, PageBean pageBean, Object... params);
 

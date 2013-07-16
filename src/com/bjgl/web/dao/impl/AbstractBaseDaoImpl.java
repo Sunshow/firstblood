@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -48,6 +49,12 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
     }
 
     @Override
+    public void merge(T entity) {
+        this.getHibernateTemplate().merge(entity);
+        this.getHibernateTemplate().flush();
+    }
+
+    @Override
     public void delete(Serializable id) {
         T instance = this.findById(id);
         if (instance != null) {
@@ -60,12 +67,22 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
         return this.getHibernateTemplate().get(this.clazz, id);
     }
 
-    protected PageBean getPageBean(final Class<T> clazz, final Example example, final PageBean pageBean) {
+    protected PageBean getPageBean(final Class<T> clazz, final Example example, final List<Criterion> criterionList, final PageBean pageBean) {
         return this.getHibernateTemplate().execute(new HibernateCallback<PageBean>() {
             @Override
             public PageBean doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(clazz);
-                criteria.add(example);
+
+                if (example != null) {
+                    criteria.add(example);
+                }
+
+                if (criterionList != null && !criterionList.isEmpty()) {
+                    for (Criterion criterion : criterionList) {
+                        criteria.add(criterion);
+                    }
+                }
+
                 criteria.setProjection(Projections.rowCount());
 
                 int totalCount = ((Long) criteria.uniqueResult()).intValue();
@@ -80,11 +97,11 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
 
     @Override
     public PageBean getPageBean(T example, PageBean pageBean) {
-        return this.getPageBean(clazz, Example.create(example), pageBean);
+        return this.getPageBean(example, null, pageBean);
     }
 
     @SuppressWarnings("unchecked")
-    protected List<T> findByExample(final Class<T> clazz, final Example example, final PageBean pageBean, final Order... orders) {
+    protected List<T> findByExample(final Class<T> clazz, final Example example, final List<Criterion> criterionList, final PageBean pageBean, final Order... orders) {
         return this.getHibernateTemplate().executeFind(new HibernateCallback<Object>() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -92,6 +109,12 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
 
                 if (example != null) {
                     criteria.add(example);
+                }
+
+                if (criterionList != null && !criterionList.isEmpty()) {
+                    for (Criterion criterion : criterionList) {
+                        criteria.add(criterion);
+                    }
                 }
 
                 if (orders != null) {
@@ -109,7 +132,17 @@ public abstract class AbstractBaseDaoImpl<T> extends HibernateDaoSupport impleme
 
     @Override
     public List<T> findByExample(T example, PageBean pageBean, Order... orders) {
-        return this.findByExample(clazz, example == null ? null : Example.create(example), pageBean, orders);
+        return this.findByExample(example, null, pageBean, orders);
+    }
+
+    @Override
+    public PageBean getPageBean(T example, List<Criterion> criterionList, PageBean pageBean) {
+        return this.getPageBean(clazz, example == null ? null : Example.create(example), criterionList, pageBean);
+    }
+
+    @Override
+    public List<T> findByExample(T example, List<Criterion> criterionList, PageBean pageBean, Order... orders) {
+        return this.findByExample(clazz, example == null ? null : Example.create(example), criterionList, pageBean, orders);
     }
 
     @SuppressWarnings("unchecked")

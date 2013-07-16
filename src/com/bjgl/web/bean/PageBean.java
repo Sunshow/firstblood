@@ -6,7 +6,7 @@ public class PageBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private int count = 0; // 记录总数
-    private int pageSize = 50; // 每页显示记录数
+    private int pageSize = 20; // 每页显示记录数
     private int pageCount = 0; // 总页数
     private int page = 1; // 当前页数
     private boolean pagging = true;//是否分页 ,默认为true分页 ,等于false时不分页

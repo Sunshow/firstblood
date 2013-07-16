@@ -1,7 +1,10 @@
 package com.bjgl.web.service.user;
 
 import com.bjgl.web.entity.user.User;
+import com.bjgl.web.entity.user.UserRole;
 import com.bjgl.web.service.BaseService;
+
+import java.util.List;
 
 /**
  * User: sunshow
@@ -13,5 +16,7 @@ public interface UserService extends BaseService<User> {
     public User findByUsername(String username);
 
     public User login(String username, String password);
+
+    public void saveOrUpdate(User user, List<UserRole> userRoleList);
 
 }
