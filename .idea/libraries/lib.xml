@@ -56,10 +56,10 @@
       <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/servlet-api.jar!/" />
       <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/slf4j-api-1.6.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/standard.jar!/" />
-      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/struts2-core-2.3.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/struts2-spring-plugin-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/struts2-core-2.3.15.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/struts2-spring-plugin-2.3.15.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/xmlbeans-2.3.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/xwork-core-2.3.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/web/WEB-INF/lib/xwork-core-2.3.15.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
