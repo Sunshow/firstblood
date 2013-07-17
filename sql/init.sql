@@ -47,7 +47,7 @@ insert into bjgl_role (name, valid, memo) values ('系统管理员', 1, '');
 commit;
 delete from bjgl_user;
 alter table bjgl_user auto_increment=1;
-insert into bjgl_user (user_name, password, name, create_time, update_time, login_time, last_login_time, valid, memo) values ('admin', '0192023a7bbd73250516f069df18b500', '管理员', now(), now(), null, null, 1, '');
+insert into bjgl_user (username, password, name, create_time, update_time, login_time, last_login_time, valid, memo) values ('admin', '0192023a7bbd73250516f069df18b500', '管理员', now(), now(), null, null, 1, '');
 commit;
 delete from bjgl_user_role;
 alter table bjgl_user_role auto_increment=1;
