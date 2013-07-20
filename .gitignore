@@ -3,6 +3,8 @@
 # Package Files #
 *.war
 *.ear
+*.iml
+.idea
 .idea/misc.xml
 .idea/workspace.xml
 out/
