@@ -77,10 +77,10 @@ public class UserAction extends BaseAction {
         }
 
         if (beginDate != null) {
-            criterionList.add(Restrictions.ge("createTime", beginDate));
+            criterionList.add(Restrictions.ge("loginTime", beginDate));
         }
         if (endDate != null) {
-            criterionList.add(Restrictions.le("createTime", endDate));
+            criterionList.add(Restrictions.le("loginTime", endDate));
         }
 
         userList = userService.findByExample(null, criterionList, this.getPageBean(), Order.asc("id"));

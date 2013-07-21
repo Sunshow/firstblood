@@ -19,7 +19,7 @@ public class PageUtil {
         //String url = request.getRequestURI().toString();
 
         int page = pageBean.getPage();
-        int total = pageBean.getCount();
+        int total = (int)Math.ceil((double)pageBean.getCount() / pageBean.getPageSize());
 
         // 是否显示上一页
         if (page > 1) {

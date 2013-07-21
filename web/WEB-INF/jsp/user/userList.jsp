@@ -81,12 +81,12 @@
                     </tr>
                     <tr>
                         <td>
-                            <label>创建时间开始</label>
+                            <label>登录时间开始</label>
                             <input type="text" id="beginDate" name="beginDate" value="<fmt:formatDate value='${beginDate}' pattern='yyyy-MM-dd HH:mm:ss'/>"/>
                             <input type="button" id="beginDateTrigger" value="选择"/>
                         </td>
                         <td>
-                            <label>创建时间结束</label>
+                            <label>登录时间结束</label>
                             <input type="text" id="endDate" name="endDate" size="10" value="<fmt:formatDate value='${endDate}' pattern='yyyy-MM-dd HH:mm:ss'/>"/>
                             <input type="button" id="endDateTrigger" value="选择"/>
                         </td>
